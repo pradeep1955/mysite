@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<h2>Add New Event</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Event</button>
+</form>
+<hr>
+<h2>All Events</h2>
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Venue</th>
+            <th>Duration</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in events %}
+        <tr>
+            <td>{{ event.title }}</td>
+            <td>{{ event.date }}</td>
+            <td>{{ event.time }}</td>
+            <td>{{ event.venue }}</td>
+            <td>{{ event.duration_minutes }} min</td>
+            <td>
+                <a href="{% url 'event_edit' event.id %}" class="btn btn-warning btn-sm">Detail/Edit</a>
+                <a href="{% url 'add_material' event.id %}" class="btn btn-primary btn-sm ml-2">Add Material</a>
+                <a href="{% url 'add_task' event.id %}" class="btn btn-primary btn-sm ml-2">Task</a>
+                <a href="{% url 'event_detail' event.id %}" class="btn btn-info btn-sm ml-2">View Materials</a>
+            </td>
+            
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No events scheduled.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>All Events</h2>
+
+
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,10 @@
+<h1>Hotels</h1>
+     <a href="{% url 'hotel_create' %}">Add New Hotel</a>
+     <ul>
+         {% for hotel in hotels %}
+             <li>
+                 {{ hotel.name }} (<a href="{% url 'hotel_update' hotel.pk %}">Edit</a>
+                 | <a href="{% url 'hotel_delete' hotel.pk %}">Delete</a>)
+             </li>
+         {% endfor %}
+     </ul>

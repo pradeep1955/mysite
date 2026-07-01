@@ -1,0 +1,99 @@
+{% extends "base_bootstrap.html" %}
+{% load humanize %} {# Optional: for nice number formatting like commas #}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h1>My Portfolio</h1>
+        </div>
+        <div class="col-md-6 text-right">
+            <a href="{% url 'portfolio:add_holding' %}" class="btn btn-success">
+                <span class="glyphicon glyphicon-plus"></span> Add Holding
+            </a>
+        </div>
+    </div>
+
+    <!-- Portfolio Summary -->
+    <div class="panel panel-info">
+        <div class="panel-heading">Portfolio Summary</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-4 text-center">
+                    <h4>Total Investment</h4>
+                    <p>₹{{ total_investment|floatformat:2|intcomma }}</p>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <h4>Current Value</h4>
+                    <p>₹{{ total_current_value|floatformat:2|intcomma }}</p>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <h4>Overall Gain/Loss</h4>
+                    <p class="{% if overall_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        ₹{{ overall_gain_loss|floatformat:2|intcomma }}
+                        ({{ overall_percent_gain_loss|floatformat:2 }}%)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Holdings Table -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Quantity</th>
+                    <th>Purchase Price</th>
+                    <th>Purchase Date</th>
+                    <th>Current Price</th>
+                    <th>Current Value</th>
+                    <th>Gain/Loss</th>
+                    <th>Gain/Loss %</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in portfolio_data %}
+                    <tr>
+                        <td>{{ item.holding.symbol }}</td>
+                        <td>{{ item.holding.quantity|floatformat:2 }}</td>
+                        <td>₹{{ item.holding.purchase_price|floatformat:2|intcomma }}</td>
+                        <td>{{ item.holding.purchase_date|date:"Y-m-d" }}</td>
+                        <td>₹{{ item.current_price|floatformat:2|intcomma }}</td>
+                        <td>₹{{ item.current_value|floatformat:2|intcomma }}</td>
+                        <td class="{% if item.gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ₹{{ item.gain_loss|floatformat:2|intcomma }}
+                        </td>
+                        <td class="{% if item.percent_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ item.percent_gain_loss|floatformat:2 }}%
+                        </td>
+                        <td>
+                            <a href="{% url 'portfolio:edit_holding' item.holding.pk %}" class="btn btn-warning btn-xs">Edit</a>
+                            <a href="{% url 'portfolio:delete_holding' item.holding.pk %}" class="btn btn-danger btn-xs">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center">Your portfolio is empty. Add your first holding!</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5" class="text-right">Totals:</th>
+                    <th>₹{{ total_current_value|floatformat:2|intcomma }}</th>
+                    <th class="{% if overall_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        ₹{{ overall_gain_loss|floatformat:2|intcomma }}
+                    </th>
+                    <th class="{% if overall_percent_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {{ overall_percent_gain_loss|floatformat:2 }}%
+                    </th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endblock %}

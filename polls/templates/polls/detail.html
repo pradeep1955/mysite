@@ -1,0 +1,46 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Cast Your Vote</h3>
+    </div>
+    <div class="panel-body">
+        <h4 class="text-center">{{ question.question_text }}</h4>
+        <hr>
+
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+        {% endif %}
+
+        <form action="{% url 'polls:vote' question.id %}" method="post">
+            {% csrf_token %}
+            {% for choice in question.choice_set.all %}
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                        {{ choice.choice_text }}
+                    </label>
+                </div>
+            {% endfor %}
+            <hr>
+            <input type="submit" value="Vote" class="btn btn-primary btn-block" />
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+<!--<form action="{% url 'polls:vote' question.id %}" method="post">
+{% csrf_token %}
+<fieldset>
+    <legend><h1>{{ question.question_text }}</h1></legend>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% for choice in question.choice_set.all %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endfor %}
+</fieldset>
+<input type="submit" value="Vote">
+<a href="{% url 'polls:index' %}" class="btn btn-secondary">Back to Polls</a>
+</form>
+-->

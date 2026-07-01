@@ -1,0 +1,32 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Left Column: Preview Image -->
+        <div class="col-md-6">
+            <img src="{{ product.preview_image.url }}" class="img-responsive img-thumbnail" alt="{{ product.title }}">
+        </div>
+
+        <!-- Right Column: Details and Buy Button -->
+        <div class="col-md-6">
+            <h1>{{ product.title }}</h1>
+            <hr>
+            <h3>Price: ₹{{ product.price }}</h3>
+            <hr>
+            <h4>Description</h4>
+            <p>{{ product.description|linebreaks }}</p>
+            <hr>
+            
+            <!-- This will be replaced with a real payment button later -->
+            <a href="#" class="btn btn-success btn-lg btn-block disabled">
+                <span class="glyphicon glyphicon-shopping-cart"></span> Buy Now (Coming Soon)
+            </a>
+            
+            <a href="{% url 'shop:product_list' %}" class="btn btn-default btn-block" style="margin-top: 10px;">
+                Back to Shop
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

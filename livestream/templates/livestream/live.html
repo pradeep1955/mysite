@@ -1,0 +1,34 @@
+<!-- templates/livestream/live.html -->
+<style>
+    .video-container {
+        width: 100%;
+        max-width: 1200px; /* Adjust the max width */
+        margin: 0 auto;
+    }
+</style>
+<h2>Live Stream Test Page</h2>
+<p>Stream Title: {{ stream.title }}</p>  <!-- This will display the stream title -->
+<p>Is Live: {{ stream.is_live }}</p>      <!-- This will display whether it's live -->
+<p>Playback URL: {{ stream.playback_url }}</p> <!-- Display the playback URL -->
+
+{% if stream and stream.is_live %}
+    <h3>{{ stream.title }}</h3>
+
+    <!-- Include Video.js -->
+    <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
+    <script src="https://unpkg.com/video.js/dist/video.js"></script>
+
+    <!-- Video player with Video.js -->
+    <div class="video-container">
+    <video id="live-stream" class="video-js vjs-default-skin" controls autoplay style="width: 100%; height: auto; max-width: 100%; aspect-ratio: 16/9;">
+        <source src="{{ stream.playback_url }}" type="application/x-mpegURL">
+    </video>
+    </div>
+
+
+    <script>
+        var player = videojs('live-stream');
+    </script>
+{% else %}
+    <p>No live stream at the moment.</p>
+{% endif %}

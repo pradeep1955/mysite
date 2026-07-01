@@ -1,0 +1,36 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="jumbotron text-center">
+        <h1>The Creator's Corner</h1>
+        <p class="lead">A collection of unique digital products, from AI art to technical guides.</p>
+    </div>
+
+    <div class="row">
+        {% if products %}
+            {% for product in products %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img src="{{ product.preview_image.url }}" alt="{{ product.title }}">
+                        <div class="caption">
+                            <h3>{{ product.title }}</h3>
+                            <p>{{ product.description|truncatewords:20 }}</p>
+                            <p>
+                                <a href="{% url 'shop:product_detail' product.id %}" class="btn btn-primary" role="button">
+                                    View Details
+                                </a>
+                                <span class="btn btn-default disabled" style="float: right;">₹{{ product.price }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-xs-12">
+                <p class="text-center">The shop is currently empty. Please check back soon!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

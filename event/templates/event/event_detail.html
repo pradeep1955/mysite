@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ event.title }} — Materials</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Materials for: {{ event.title }}</h2>
+    <ul class="list-group">
+        {% for material in materials %}
+            <li class="list-group-item">
+    <strong>{{ material.name }}</strong> — {{ material.quantity }}
+    {% if material.remark %}
+        <br><em>Note:</em> {{ material.remark }}
+    {% endif %}
+    <br>
+    {% if material.is_arranged %}
+        <span class="badge badge-success">Arranged</span>
+    {% else %}
+        <span class="badge badge-warning">Pending</span>
+    {% endif %}
+    <a href="{% url 'edit_material' material.id %}" class="btn btn-warning btn-sm float-right ml-2">Edit</a> 
+    <a href="{% url 'delete_material' material.id %}" class="btn btn-danger btn-sm ml-2">Delete</a>
+</li>
+
+ 
+        {% empty %}
+            <li class="list-group-item">No materials added yet.</li>
+        {% endfor %}
+    </ul>
+    <h3>Tasks</h3>
+<ul class="list-group">
+    {% for task in tasks %}
+    <li class="list-group-item">
+        {{ task.description }} — Due: {{ task.due_date }}
+        {% if task.is_completed %}
+            <span class="badge badge-success">Completed</span>
+        {% else %}
+            <span class="badge badge-warning">Pending</span>
+        {% endif %}
+    </li>
+    {% empty %}
+    <li class="list-group-item">No tasks added for this event.</li>
+    {% endfor %}
+</ul>
+
+    <a href="{% url 'add_material' event.id %}" class="btn btn-primary mt-3">Add Material</a>
+    <a href="{% url 'add_task' event.id %}" class="btn btn-success mt-3 ml-2">Add Task</a>
+    <a href="{% url 'event_list' %}" class="btn btn-secondary mt-3">Back to Events</a>
+</div>
+</body>
+</html>

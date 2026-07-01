@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.log
+*/migrations/__pycache__/
+
+# SQLite databases (local only)
+*.sqlite3
+
+# Environment variables and secrets
+.env
+*.env
+.env.test
+.env.production
+mysite/github_settings.py
+
+# Virtual environments
+venv/
+env/
+.venv/
+django_venv/
+
+# Django collected static & media
+media/
+staticfiles/
+
+# IDE/editor settings
+.vscode/
+.idea/
+.claude/
+
+# OS junk files
+.DS_Store
+Thumbs.db
+
+# Archives (avoid committing zipped exports)
+*.zip
+
+# Compiled files or backups
+*.bak
+*.tmp
+*.swp

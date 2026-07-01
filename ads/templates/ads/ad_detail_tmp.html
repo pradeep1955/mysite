@@ -1,0 +1,132 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ ad.title }}</h3>
+    </div>
+    <div class="panel-body">
+        
+        <!-- Display the image if it exists -->
+        {% if ad.image %}
+            <img src="{{ ad.image.url }}" class="img-responsive img-thumbnail" style="margin-bottom: 20px;" alt="{{ ad.title }}">
+        {% endif %}
+        
+        <!-- Display the main content -->
+        <p>{{ ad.content|linebreaks }}</p>
+        
+        <hr>
+        <p>
+            <small>
+                Posted by: <strong>{{ ad.owner }}</strong> on {{ ad.created_at|date:"F j, Y" }}
+            </small>
+        </p>
+
+    </div>
+</div>
+
+<!-- Comment Section -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Comments</h3>
+    </div>
+    <div class="panel-body">
+        {% if comments %}
+            <ul class="list-group">
+                {% for comment in comments %}
+                    <li class="list-group-item">
+                        <strong>{{ comment.owner.username }}</strong> ({{ comment.created_at|timesince }} ago)
+                        <p style="margin-top: 5px;">{{ comment.text }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Comment Form -->
+{% if user.is_authenticated %}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <h4>Leave a Comment</h4>
+        <form method="post" action="{% url 'ads:ad_comment_create' ad.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ comment_form.text.errors }}
+                <textarea name="text" class="form-control" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Comment</button>
+        </form>
+    </div>
+</div>
+{% else %}
+    <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to leave a comment.</p>
+{% endif %}
+
+{% endblock %}
+<!--{% extends "base_menu.html" %}
+{% load humanize %} <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize --
+{% block content %}
+<style>
+.overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: none;
+  background-color: rgba(0,0,0,0.5); /*dim the background*/
+}
+</style>
+
+<span style="float: right;">
+({{ ad.updated_at|naturaltime }})
+{% if ad.owner == user %}
+<a href="{% url 'ads:ad_update' ad.id %}"><i class="fa fa-pencil"></i></a>
+<a href="{% url 'ads:ad_delete' ad.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</span>
+<h1>{{ ad.title }}</h1>
+<p>
+{{ ad.text }}
+{% if ad.content_type %}
+<div id="overlay" class="overlay" style="text-align: center;"
+   onclick="document.getElementById('overlay').style.display = 'none';" >
+<img style="width:90%;margin-top: 50px; border:3px solid black;" src="{% url 'ads:ad_picture' ad.id %}">
+</div>
+{% endif %}
+{% if ad.content_type %}
+<img style="float:right; max-width:50%;" src="{% url 'ads:ad_picture' ad.id %}"
+    onclick="document.getElementById('overlay').style.display = 'block';">
+{% endif %}
+</p>
+<p>
+{% if user.is_authenticated %}
+<br clear="all"/>
+<p>
+{% load crispy_forms_tags %}
+<form method="post" action="{% url 'ads:ad_comment_create' ad.id %}">
+    {% csrf_token %}
+    {{ comment_form|crispy }}
+<input type="submit" value="Submit">
+<input type="submit" value="All Ads" onclick="window.location.href='{% url 'ads:all' %}';return false;">
+</form>
+</p>
+{% endif %}
+{% for comment in comments %}
+<p> {{ comment.text }} 
+({{ comment.updated_at|naturaltime }})
+{% if user == comment.owner %}
+<a href="{% url 'ads:ad_comment_delete' comment.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</p>
+{% endfor %}
+</p>
+<p>
+<a href="{% url 'ads:all' %}">All ads</a>
+</p>
+{% endblock %}
+-->

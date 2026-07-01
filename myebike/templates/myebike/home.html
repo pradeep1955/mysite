@@ -1,0 +1,338 @@
+{% extends "base_bootstrap.html" %}
+{% load static %}
+
+{% block title %}My E-Bike Adventures{% endblock %}
+
+{# ----------------------------------------------------------------- #}
+{#  PAGE-SPECIFIC STYLES
+{# ----------------------------------------------------------------- #}
+{% block styles %}
+    {{ block.super }} {# Keeps styles from your base template #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* --- (Your existing styles) --- */
+        body {
+            background-color: #212529;
+        }
+        .electric-blue {
+            color: #00BFFF;
+        }
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://placehold.co/1920x600/333/999?text=E-Bike+Hero+Image');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 6rem 0;
+            margin-bottom: 2rem;
+        }
+
+        /* --- CAROUSEL STYLES --- */
+        .plot-carousel-container {
+            position: relative;
+            background-color: #343a40;
+            border: 1px solid #555;
+            color: #f8f9fa;
+        }
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            z-index: 10;
+            user-select: none;
+        }
+        .carousel-arrow:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .carousel-arrow:disabled {
+            color: #666;
+            cursor: not-allowed;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        #carousel-arrow-left {
+            left: 0;
+            border-top-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+        #carousel-arrow-right {
+            right: 0;
+            border-top-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
+        }
+        .plot-slide-content {
+            padding: 1rem;
+        }
+        #plot-image {
+            width: 100%;
+            height: auto;
+            min-height: 300px; 
+            background-color: #2a2a2a;
+        }
+        #plot-placeholder {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-style: italic;
+        }
+        .volt-text {
+            color: #ccff00; /* A high-visibility "volt" green/yellow */
+        }
+        
+        /* --- NEW: Gemini Feature Styles --- */
+        #story-loading {
+            display: none; /* Hidden by default */
+            text-align: center;
+            padding: 1rem;
+            color: #888;
+        }
+        #ride-story-text {
+            display: none; /* Hidden by default */
+            background-color: #212529;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            border-left: 4px solid #00BFFF;
+            font-style: italic;
+        }
+
+    </style>
+{% endblock %}
+
+
+{% block content %}
+{# ... (Hero Section is unchanged) ... #}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-3 fw-bold">The <span class="electric-blue">E-Bike</span> Project</h1>
+        <p class="lead fs-4">Logging my journeys, one volt at a time.</p>
+    </div>
+</div>
+<div class="container text-light my-5">
+
+    {# ... (Story & Image Section is unchanged) ... #}
+    <div class="row align-items-center g-5 mb-5 pb-5 border-bottom border-secondary">
+        <div class="col-lg-6">
+            <h2 class="fw-bold mb-3"><i class="fas fa-bolt electric-blue me-2"></i>About the Bike</h2>
+            <p class="fs-5 lead">{{ story }}</p>
+            <p>...</p>
+        </div>
+        <div class="col-lg-6">
+            <div class="rounded shadow-lg"
+                 style="width: 100%; height: 400px; background-image: url('{% static 'myebike/images/mycycle.jpg' %}'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #212529;">
+            </div>
+        </div>
+    </div>
+
+
+    {# ----------------------------------------------------------------- #}
+    {#  PLOT CAROUSEL SECTION
+    {# ----------------------------------------------------------------- #}
+    <div class="text-center mb-5">
+        <h2 class="fw-bold"><i class="fas fa-map-signs electric-blue me-2"></i>My Ride Gallery</h2>
+        <p class="lead">Use the arrows to browse my journeys.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="plot-carousel-container rounded shadow-lg">
+                <!-- Left/Right Arrow Buttons -->
+                <button id="carousel-arrow-left" class="carousel-arrow">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button id="carousel-arrow-right" class="carousel-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <!-- The content that will change -->
+                <div class="plot-slide-content">
+                    
+                    <img id="plot-image" class="card-img-top img-fluid" alt="Ride Plot" style="display: none;">
+                    <div id="plot-placeholder" style="display: none;">
+                        No plot data for this ride.
+                    </div>
+
+                    <!-- The text content (name, date) -->
+                    <div class="card-body text-center">
+                        <h5 id="plot-ride-name" class="card-title fw-bold electric-blue fs-4">
+                            Loading...
+                        </h5>
+                        <p id="plot-ride-date" class="card-text text-muted">
+                        </p>
+                        
+                        <!-- Stats: Km and Avg Speed -->
+                        <div class="d-flex justify-content-around">
+                            <h4 id="plot-ride-km" class="volt-text fw-bold mt-3"></h4>
+                            <h4 id="plot-ride-speed" class="volt-text fw-bold mt-3"></h4>
+                        </div>
+                        
+                        <!-- +++ NEW: GEMINI STORY SECTION +++ -->
+                        <div class="mt-4">
+                            <!-- This button will be shown/hidden -->
+                            <button id="generate-story-btn" class="btn btn-primary">
+                                ✨ Generate Ride Story
+                            </button>
+                            
+                            <!-- This loading spinner will be shown/hidden -->
+                            <div id="story-loading">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Generating story...
+                            </div>
+                            
+                            <!-- The generated story will appear here -->
+                            <p id="ride-story-text" class="card-text mt-3"></p>
+                        </div>
+                        <!-- ++++++++++++++++++++++++++++++++ -->
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{# ----------------------------------------------------------------- #}
+{#  PAGE-SPECIFIC SCRIPTS (Carousel JavaScript)
+{# ----------------------------------------------------------------- #}
+{% block scripts %}
+    {{ block.super }} {# Keeps scripts from your base template #}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // 1. Get all the ride data from Django
+            const rides = {{ rides_json|safe }};
+            
+            // 2. Get the HTML elements
+            const plotImage = document.getElementById('plot-image');
+            const plotPlaceholder = document.getElementById('plot-placeholder');
+            const rideName = document.getElementById('plot-ride-name');
+            const rideDate = document.getElementById('plot-ride-date');
+            const rideKm = document.getElementById('plot-ride-km');
+            const rideSpeed = document.getElementById('plot-ride-speed');
+            const leftArrow = document.getElementById('carousel-arrow-left');
+            const rightArrow = document.getElementById('carousel-arrow-right');
+            
+            // --- NEW: Gemini HTML elements ---
+            const generateStoryBtn = document.getElementById('generate-story-btn');
+            const storyLoading = document.getElementById('story-loading');
+            const rideStoryText = document.getElementById('ride-story-text');
+
+            let currentRideIndex = 0; 
+
+            // 3. This function displays a ride based on its index
+            function showRide(index) {
+                if (!rides || rides.length === 0) {
+                    // No rides at all
+                    rideName.textContent = "No Rides Found";
+                    rideDate.textContent = "Go for a ride to log some data!";
+                    rideKm.textContent = "";
+                    rideSpeed.textContent = "";
+                    plotPlaceholder.style.display = 'flex';
+                    plotImage.style.display = 'none';
+                    leftArrow.disabled = true;
+                    rightArrow.disabled = true;
+                    generateStoryBtn.style.display = 'none'; // Hide button
+                    return;
+                }
+                
+                const ride = rides[index];
+                
+                // Update the text
+                rideName.textContent = ride.name;
+                rideDate.textContent = "Ride logged on: "_ + ride.date;
+
+                // Update Stats
+                rideKm.textContent = (ride.total_km > 0) ? ride.total_km + " km" : "";
+                rideSpeed.textContent = (ride.avg_speed > 0) ? ride.avg_speed + " km/h (avg)" : "";
+
+                // Check if this ride has a plot
+                if (ride.plot) {
+                    plotImage.src = "data:image/png;base64,"_ + ride.plot;
+                    plotImage.style.display = 'block';
+                    plotPlaceholder.style.display = 'none';
+                } else {
+                    plotImage.style.display = 'none';
+                    plotPlaceholder.style.display = 'flex';
+                }
+
+                // --- NEW: Reset Gemini section for the new slide ---
+                rideStoryText.style.display = 'none'; // Hide old story
+                rideStoryText.textContent = "";
+                storyLoading.style.display = 'none'; // Hide loading
+                generateStoryBtn.style.display = 'block'; // Show button
+                // Store the ride ID on the button itself
+                generateStoryBtn.dataset.rideId = ride.id; 
+                // -----------------------------------------------------
+
+                // 4. Update the arrow buttons
+                leftArrow.disabled = (index === 0);
+                rightArrow.disabled = (index === rides.length - 1);
+            }
+
+            // 5. Add click listeners to the arrows
+            rightArrow.addEventListener('click', function() {
+                if (currentRideIndex < rides.length - 1) {
+                    currentRideIndex++;
+                    showRide(currentRideIndex);
+                }
+            });
+            leftArrow.addEventListener('click', function() {
+                if (currentRideIndex > 0) {
+                    currentRideIndex--;
+                    showRide(currentRideIndex);
+                }
+            });
+            
+            // --- NEW: Add click listener for the Gemini Button ---
+            generateStoryBtn.addEventListener('click', async function() {
+                const rideId = this.dataset.rideId; // Get the ID from the button
+                
+                // 1. Set loading state
+                generateStoryBtn.style.display = 'none'; // Hide button
+                storyLoading.style.display = 'block'; // Show loading
+                rideStoryText.style.display = 'none'; // Hide old story
+                
+                try {
+                    // 2. Call our new API endpoint
+                    const response = await fetch(`/myebike/api/generate_story/${rideId}/`);
+                    
+                    if (!response.ok) {
+                        // Handle server errors (500, 404)
+                        const err = await response.json();
+                        throw new Error(err.error || 'Failed to get story');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // 3. Success! Show the story
+                    storyLoading.style.display = 'none'; // Hide loading
+                    rideStoryText.textContent = data.story; // Set new story text
+                    rideStoryText.style.display = 'block'; // Show story
+                    
+                } catch (error) {
+                    // 4. Handle errors
+                    console.error("Error generating story:", error);
+                    storyLoading.style.display = 'none'; // Hide loading
+                    rideStoryText.textContent = "Error: " + error.message; // Show error
+                    rideStoryText.style.display = 'block'; // Show story box
+                    // We don't show the button again, to prevent spamming
+                }
+            });
+            // -----------------------------------------------------
+
+            // 6. Show the very first ride when the page loads
+            showRide(currentRideIndex);
+        });
+    </script>
+{% endblock %}

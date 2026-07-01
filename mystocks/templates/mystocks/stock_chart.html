@@ -1,0 +1,23 @@
+<div style="margin-top: 60px;">
+    <h1>{{ symbol }} Stock Chart</h1>
+</div>
+
+
+<form method="get">
+    <label for="symbol">Choose Stock:</label>
+    <select name="symbol" id="symbol" onchange="this.form.submit()">
+        {% for stock in favorite_stocks %}
+            <option value="{{ stock }}" {% if stock == symbol %}selected{% endif %}>{{ stock }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+{% if chart %}
+    <img src="data:image/png;base64,{{ chart }}" />
+    <p style="font-weight:bold; font-size:16px; color:#00b894;">
+        Expert Comment: {{ comment }}
+    </p>
+    <p style="color:blue;">{{ internet_status }}</p>
+{% else %}
+    <p>No data available for {{ symbol }}.</p>
+{% endif %}

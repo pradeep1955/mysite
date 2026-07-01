@@ -1,0 +1,264 @@
+{% extends "base_bootstrap.html" %}
+{% load static %}
+
+{% block title %}My E-Bike Adventures{% endblock %}
+
+{# ----------------------------------------------------------------- #}
+{#  PAGE-SPECIFIC STYLES
+{# ----------------------------------------------------------------- #}
+{% block styles %}
+    {{ block.super }} {# Keeps styles from your base template #}
+    
+    <!-- Font Awesome (for the carousel arrows) -->
+    <!-- You might already have this in base_bootstrap.html -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* --- (Your existing styles) --- */
+        body {
+            background-color: #212529;
+        }
+        .electric-blue {
+            color: #00BFFF;
+        }
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://placehold.co/1920x600/333/999?text=E-Bike+Hero+Image');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 6rem 0;
+            margin-bottom: 2rem;
+        }
+
+        /* --- NEW CAROUSEL STYLES --- */
+        
+        /* The main container for the plot and arrows */
+        .plot-carousel-container {
+            position: relative;
+            background-color: #343a40;
+            border: 1px solid #555;
+            color: #f8f9fa;
+        }
+
+        /* The arrows (left/right) */
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            z-index: 10;
+            user-select: none; /* Prevents text selection */
+        }
+        .carousel-arrow:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .carousel-arrow:disabled {
+            color: #666;
+            cursor: not-allowed;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        #carousel-arrow-left {
+            left: 0;
+            border-top-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+        #carousel-arrow-right {
+            right: 0;
+            border-top-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
+        }
+
+        /* The content of the slide (plot + text) */
+        .plot-slide-content {
+            padding: 1rem;
+        }
+        
+        /* The plot image */
+        #plot-image {
+            width: 100%;
+            height: auto;
+            /* Give it a min-height so the box doesn't collapse */
+            min-height: 300px; 
+            background-color: #2a2a2a;
+        }
+
+        /* The placeholder for "No Data" */
+        #plot-placeholder {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-style: italic;
+        }
+
+    </style>
+{% endblock %}
+
+
+{% block content %}
+{# ... (Hero Section is unchanged) ... #}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-3 fw-bold">The <span class="electric-blue">E-Bike</span> Project</h1>
+        <p class="lead fs-4">Logging my journeys, one volt at a time.</p>
+    </div>
+</div>
+
+<div class="container text-light my-5">
+
+    {# ... (Story & Image Section is unchanged) ... #}
+    <div class="row align-items-center g-5 mb-5 pb-5 border-bottom border-secondary">
+        <div class="col-lg-6">
+            <h2 class="fw-bold mb-3"><i class="fas fa-bolt electric-blue me-2"></i>About the Bike</h2>
+            <p class="fs-5 lead">{{ story }}</p>
+            <p>...</p>
+        </div>
+        <div class="col-lg-6">
+            <div class="rounded shadow-lg"
+                 style="width: 100%; height: 400px; background-image: url('{% static 'myebike/images/mycycle.jpg' %}'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #212529;">
+            </div>
+        </div>
+    </div>
+
+
+    {# ----------------------------------------------------------------- #}
+    {#  NEW: PLOT CAROUSEL SECTION
+    {#  This REPLACES the 3-card layout
+    {# ----------------------------------------------------------------- #}
+    <div class="text-center mb-5">
+        <h2 class="fw-bold"><i class="fas fa-map-signs electric-blue me-2"></i>My Ride Gallery</h2>
+        <p class="lead">Use the arrows to browse my journeys.</p>
+    </div>
+
+    <!-- The carousel will be centered in a row -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="plot-carousel-container rounded shadow-lg">
+                <!-- Left/Right Arrow Buttons -->
+                <button id="carousel-arrow-left" class="carousel-arrow">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button id="carousel-arrow-right" class="carousel-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <!-- The content that will change -->
+                <div class="plot-slide-content">
+                    
+                    <!-- The plot image will go here -->
+                    <img id="plot-image" class="card-img-top img-fluid" alt="Ride Plot" style="display: none;">
+                    
+                    <!-- This shows if the plot has no data -->
+                    <div id="plot-placeholder" style="display: none;">
+                        No plot data for this ride.
+                    </div>
+
+                    <!-- The text content (name, date) -->
+                    <div class="card-body text-center">
+                        <h5 id="plot-ride-name" class="card-title fw-bold electric-blue fs-4">
+                            Loading...
+                        </h5>
+                        <p id="plot-ride-date" class="card-text text-muted">
+                            
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{# ----------------------------------------------------------------- #}
+{#  PAGE-SPECIFIC SCRIPTS (Carousel JavaScript)
+{# ----------------------------------------------------------------- #}
+{% block scripts %}
+    {{ block.super }} {# Keeps scripts from your base template #}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // 1. Get all the ride data from Django
+            const rides = {{ rides_json|safe }};
+            
+            // 2. Get the HTML elements we need to control
+            const plotImage = document.getElementById('plot-image');
+            const plotPlaceholder = document.getElementById('plot-placeholder');
+            const rideName = document.getElementById('plot-ride-name');
+            const rideDate = document.getElementById('plot-ride-date');
+            const leftArrow = document.getElementById('carousel-arrow-left');
+            const rightArrow = document.getElementById('carousel-arrow-right');
+
+            let currentRideIndex = 0; // Start at the first ride (index 0)
+
+            // 3. This function displays a ride based on its index
+            function showRide(index) {
+                if (!rides || rides.length === 0) {
+                    // No rides at all
+                    rideName.textContent = "No Rides Found";
+                    rideDate.textContent = "Go for a ride to log some data!";
+                    plotPlaceholder.style.display = 'flex';
+                    plotImage.style.display = 'none';
+                    leftArrow.disabled = true;
+                    rightArrow.disabled = true;
+                    return;
+                }
+                
+                // Get the data for the selected ride
+                const ride = rides[index];
+                
+                // Update the text
+                rideName.textContent = ride.name;
+                rideDate.textContent = "Ride logged on: " + ride.date;
+
+                // Check if this ride has a plot
+                if (ride.plot) {
+                    // It has a plot, so show the image
+                    plotImage.src = "data:image/png;base64," + ride.plot;
+                    plotImage.style.display = 'block';
+                    plotPlaceholder.style.display = 'none';
+                } else {
+                    // No plot, show the placeholder
+                    plotImage.style.display = 'none';
+                    plotPlaceholder.style.display = 'flex';
+                }
+
+                // 4. Update the arrow buttons
+                // Disable left arrow if we are at the first ride
+                leftArrow.disabled = (index === 0);
+                
+                // Disable right arrow if we are at the last ride
+                rightArrow.disabled = (index === rides.length - 1);
+            }
+
+            // 5. Add click listeners to the arrows
+            rightArrow.addEventListener('click', function() {
+                if (currentRideIndex < rides.length - 1) {
+                    currentRideIndex++; // Move to the next ride
+                    showRide(currentRideIndex);
+                }
+            });
+
+            leftArrow.addEventListener('click', function() {
+                if (currentRideIndex > 0) {
+                    currentRideIndex--; // Move to the previous ride
+                    showRide(currentRideIndex);
+                }
+            });
+
+            // 6. Show the very first ride when the page loads
+            showRide(currentRideIndex);
+        });
+    </script>
+{% endblock %}

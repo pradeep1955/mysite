@@ -1,0 +1,237 @@
+{% extends "base_bootstrap.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- Header Section -->
+<div class="jumbotron text-center page-header-custom">
+    <h1>AI-Powered Insights</h1>
+    <p class="lead">Stock market analysis, news summaries, and local weather reports.</p>
+    <p class="small"><strong>Disclaimer:</strong> This content is AI generated and not investment advice.</p>
+</div>
+
+<!-- Main Content Grid -->
+<div class="row">
+
+    <!-- Left Column (Primary Content) -->
+    <div class="col-md-8">
+
+        <!-- Stock Market Panel -->
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-stats"></span> Stock Market Analysis</h3>
+            </div>
+            <div class="panel-body">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" src="{% url 'stock_chart' %}" style="border:none;"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- START: Featured Greeting Panel (from Ads app) - NEW SECTION -->
+        <!-- ================================================================= -->
+        {% if latest_ad %}
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-star"></span> Message of the Day</h3>
+            </div>
+            <div class="panel-body">
+                <h4>{{ latest_ad.title }}</h4>
+                
+                {% if latest_ad.image %}
+                    <img src="{{ latest_ad.image.url }}" class="img-responsive img-thumbnail" style="margin-bottom: 15px;" alt="{{ latest_ad.title }}">
+                {% endif %}
+                
+                <p>{{ latest_ad.content|truncatewords:30 }}</p>
+                
+                <!-- NOTE: This link assumes your ads detail URL is named 'ad_detail' -->
+                <a href="{% url 'ads:ad_detail' latest_ad.id %}" class="btn btn-success">Read More & Comment</a>
+            </div>
+        </div>
+        {% endif %}
+        <!-- =============================================================== -->
+        <!-- END: Featured Greeting Panel                                    -->
+        <!-- =============================================================== -->
+
+        <!-- News Summary Panel -->
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-list-alt"></span> Today's News Summary <small>(AI Generated)</small></h3>
+            </div>
+            <div class="panel-body">
+                {{ news_summary|safe }}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right Column (Secondary Widgets) -->
+    <div class="col-md-4">
+
+        <!-- Video Player Panel -->
+        {% if latest_video %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-facetime-video"></span> {{ latest_video.title }}</h3>
+            </div>
+            <div class="panel-body">
+                <p>{{ latest_video.description }}</p>
+                <button class="btn btn-info btn-block" data-toggle="collapse" data-target="#video-player">
+                    Watch Video
+                </button>
+                <div id="video-player" class="collapse" style="margin-top: 15px;">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <video class="embed-responsive-item" controls>
+                            <source src="{{ latest_video.video_file.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Weather Panel -->
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-cloud"></span> Raipur Weather</h3>
+            </div>
+            <div class="panel-body">
+                <h4>Current Conditions</h4>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span class="glyphicon glyphicon-thermometer"></span> Temperature: <strong>{{ temperature|floatformat:1 }} °C</strong>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="glyphicon glyphicon-tint"></span> Humidity: <strong>{{ humidity|floatformat:1 }} %</strong>
+                    </li>
+                </ul>
+                <p class="text-muted text-right"><small>Last updated: {{ last_updated }}</small></p>
+                <hr>
+                <h4>Last 12 Hours</h4>
+                <div style="position: relative; height: 250px;">
+                    <canvas id="sensorChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Poll Panel -->
+        {% if latest_question %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-check"></span> Weekly Poll</h3>
+            </div>
+            <div class="panel-body">
+                <p><strong>{{ latest_question.question_text }}</strong></p>
+                <form action="{% url 'polls:vote' latest_question.id %}" method="post">
+                    {% csrf_token %}
+                    {% for choice in latest_question.choice_set.all %}
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                                {{ choice.choice_text }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                    <hr>
+                    <input type="submit" value="Vote" class="btn btn-primary btn-block" />
+                </form>
+            </div>
+            <div class="panel-footer text-right">
+                 <a href="{% url 'polls:results' latest_question.id %}">View Results</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Chatbot Panel -->
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chatbot</h3>
+            </div>
+            <div class="panel-body">
+                <div id="chatbox" style="height: 250px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background-color: #f5f5f5;"></div>
+                <form id="chat-form" method="POST" class="input-group">
+                    {% csrf_token %}
+                    <input type="text" id="user-input" class="form-control" placeholder="Ask me anything..." autocomplete="off" required />
+                    <span class="input-group-btn">
+                        <button class="btn btn-success" type="submit">Send</button>
+                    </span>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div> <!-- /.row -->
+
+
+<!-- JavaScript Section -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Sensor Chart Script
+const ctx = document.getElementById('sensorChart').getContext('2d');
+const sensorChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ labels|default:'[]'|safe }},
+        datasets: [
+            {
+                label: 'Temperature (°C)',
+                data: {{ temperature_data|default:'[]'|safe }},
+                borderColor: '#d9534f',
+                backgroundColor: 'rgba(217, 83, 79, 0.2)',
+                tension: 0.2,
+                fill: true
+            },
+            {
+                label: 'Humidity (%)',
+                data: {{ humidity_data|default:'[]'|safe }},
+                borderColor: '#5bc0de',
+                backgroundColor: 'rgba(91, 192, 222, 0.2)',
+                tension: 0.2,
+                fill: true
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: false },
+            x: { ticks: { maxRotation: 0, minRotation: 0, autoSkip: true, maxTicksLimit: 6 } }
+        }
+    }
+});
+
+// Chatbot Script
+$(document).ready(function() {
+    $('#chat-form').on('submit', function(e) {
+        e.preventDefault();
+        var userInput = $('#user-input').val().trim();
+        if (userInput === "") return;
+
+        $('#chatbox').append('<p class="text-right"><strong>You:</strong> ' + userInput + '</p>');
+        $('#user-input').val('');
+        $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+
+        $.ajax({
+            url: "{% url 'chatbot' %}",
+            type: 'POST',
+            contentType: 'application/json',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            data: JSON.stringify({'message': userInput}),
+            success: function(response) {
+                $('#chatbox').append('<p class="text-left"><strong>Bot:</strong> ' + response.message + '</p>');
+                $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+            },
+            error: function(xhr, status, error) {
+                $('#chatbox').append('<p class="text-danger">Error communicating with the bot.</p>');
+            }
+        });
+    });
+});
+</script>
+
+{% endblock content %}

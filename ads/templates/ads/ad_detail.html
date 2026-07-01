@@ -1,0 +1,72 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ ad.title }}</h3>
+    </div>
+    <div class="panel-body">
+        
+        <!-- Display the image if it exists -->
+        {% if ad.image %}
+            <img src="{{ ad.image.url }}" class="img-responsive img-thumbnail" style="margin-bottom: 20px;" alt="{{ ad.title }}">
+        {% endif %}
+        
+        <!-- Display the main content -->
+        <p>{{ ad.content|linebreaks }}</p>
+        
+        <hr>
+        <p>
+            <small>
+                Posted by: <strong>{{ ad.owner }}</strong> on {{ ad.created_at|date:"F j, Y" }}
+            </small>
+        </p>
+        {% if user == ad.owner or user.is_superuser %}
+        <a href="{% url 'ads:ad_delete' ad.id %}" class="btn btn-danger btn-sm">
+            <span class="glyphicon glyphicon-trash"></span> Delete this Message
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Comment Section -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Comments</h3>
+    </div>
+    <div class="panel-body">
+        {% if comments %}
+            <ul class="list-group">
+                {% for comment in comments %}
+                    <li class="list-group-item">
+                        <strong>{{ comment.owner.username }}</strong> ({{ comment.created_at|timesince }} ago)
+                        <p style="margin-top: 5px;">{{ comment.text }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Comment Form -->
+{% if user.is_authenticated %}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <h4>Leave a Comment</h4>
+        <form method="post" action="{% url 'ads:ad_comment_create' ad.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ comment_form.text.errors }}
+                <textarea name="text" class="form-control" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Comment</button>
+        </form>
+    </div>
+</div>
+{% else %}
+    <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to leave a comment.</p>
+{% endif %}
+
+{% endblock %}

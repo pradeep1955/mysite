@@ -1,0 +1,69 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h1>Contact List <span class="badge">{{ contacts|length }}</span></h1>
+        </div>
+        <div class="col-md-6 text-right">
+            <!-- 1. ADD NEW CONTACT BUTTON -->
+            <a href="{% url 'myapp:contact_create' %}" class="btn btn-success">
+                <span class="glyphicon glyphicon-plus"></span> Add New Contact
+            </a>
+        </div>
+    </div>
+
+    <!-- 2. CORRECTED FILTER BUTTONS -->
+    <div class="btn-group mb-4" role="group">
+        <a href="{% url 'myapp:contact_list' %}" class="btn {% if filter == 'all' %}btn-primary{% else %}btn-default{% endif %}">
+            Show All
+        </a>
+        <a href="{% url 'myapp:invited_contacts' %}" class="btn {% if filter == 'invited' %}btn-primary{% else %}btn-default{% endif %}">
+            Show Invited
+        </a>
+        <a href="{% url 'myapp:not_invited_contacts' %}" class="btn {% if filter == 'not_invited' %}btn-primary{% else %}btn-default{% endif %}">
+            To Be Invited
+        </a>
+    </div>
+
+    <!-- Contact List Table -->
+    {% if contacts %}
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Mobile</th>
+                <th>Address</th>
+                <th>Remark</th>
+                <th>Invited?</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contact in contacts %}
+            <tr>
+                <td>{{ contact.fname }} {{ contact.lname }}</td>
+                <td>{{ contact.mobile }}</td>
+                <td>{{ contact.Address }}</td>
+                <td>{{ contact.Remark }}</td>
+                <td>
+                    {% if contact.invited %}
+                        <span class="glyphicon glyphicon-ok text-success"></span> Yes
+                    {% else %}
+                        <span class="glyphicon glyphicon-remove text-danger"></span> No
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'myapp:contact_edit' contact.id %}" class="btn btn-warning btn-xs">Edit</a>
+                    <a href="{% url 'myapp:contact_delete' contact.id %}" class="btn btn-danger btn-xs">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <div class="alert alert-info">No contacts found for this filter.</div>
+    {% endif %}
+</div>
+{% endblock %}

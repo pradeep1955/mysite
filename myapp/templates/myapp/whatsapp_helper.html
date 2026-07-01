@@ -1,0 +1,45 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><span class="glyphicon glyphicon-send"></span> WhatsApp Message Helper</h3>
+    </div>
+    <div class="panel-body">
+        {% if daily_message %}
+            <h4>Today's Message & Image</h4>
+            <div class="well">
+                <p>{{ daily_message.message_text }}</p>
+            </div>
+
+            {% if daily_message.message_image %}
+                <p><strong>Today's Image (Right-click to save):</strong></p>
+                <img src="{{ daily_message.message_image.url }}" class="img-responsive img-thumbnail" style="max-width: 300px;" alt="Daily Image">
+            {% else %}
+                <p class="text-muted">No image was uploaded for today.</p>
+            {% endif %}
+            <hr>
+
+            <h4>Contact List</h4>
+            <p>Click a button to open WhatsApp with the message pre-filled. You will need to attach the image manually.</p>
+            <div class="list-group">
+                {% for contact in contacts %}
+                    <a href="https://wa.me/{{ contact.mobile }}?text={{ encoded_message }}"
+                       class="list-group-item"
+                       target="_blank"> <!-- Opens WhatsApp in a new tab -->
+                        <strong>{{ contact.fname }} {{ contact.lname }}</strong>
+                        <span class="pull-right"><span class="glyphicon glyphicon-send"></span> Send Message</span>
+                    </a>
+                {% empty %}
+                    <p>No contacts found in the database.</p>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="alert alert-warning">
+                No daily message has been created for today. Please <a href="/admin/myapp/dailymessage/add/" class="alert-link">add one in the admin panel</a>.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

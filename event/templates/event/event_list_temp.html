@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event List</title>
+</head>
+<body>
+<h2>Add New Event</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Event</button>
+</form>
+<hr>
+<h2>All Events</h2>
+<ul>
+    {% for event in events %}
+        <li>
+            {{ event.title }} — {{ event.date }} at {{ event.time }} | Venue: {{ event.venue }}
+            <a href="{% url 'event_edit' event.id %}" class="btn btn-warning btn-sm">Detail/Edit</a>
+            <a href="{% url 'add_material' event.id %}" class="btn btn-primary btn-sm ml-2">Add Material</a>
+            <a href="{% url 'event_detail' event.id %}" class="btn btn-info btn-sm ml-2">View Materials</a>
+        </li>
+    {% empty %}
+        <li>No events scheduled yet.</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
+
+
+
+
