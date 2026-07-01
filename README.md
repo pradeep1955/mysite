@@ -83,6 +83,58 @@ To stop the containers:
 docker compose down
 ```
 
+## Deploy On PythonAnywhere
+
+These steps replace an existing PythonAnywhere `mysite` project with the GitHub `master` branch.
+
+Open a PythonAnywhere Bash console:
+
+```bash
+cd ~
+mv mysite mysite_backup
+git clone -b master https://github.com/pradeep1955/mysite.git mysite
+cd mysite
+```
+
+Create or reuse a virtual environment:
+
+```bash
+python3.11 -m venv ~/.virtualenvs/mysite-venv
+source ~/.virtualenvs/mysite-venv/bin/activate
+pip install -r requirements.txt
+```
+
+Create the production environment file:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set at least:
+
+```env
+DJANGO_SECRET_KEY=replace-this-with-a-real-secret
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=yourusername.pythonanywhere.com
+```
+
+If you use PythonAnywhere MySQL, also set the `DB_ENGINE`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, and `DB_PORT` values in `.env`. For SQLite, keep the SQLite defaults.
+
+Apply migrations and collect static files:
+
+```bash
+python manage.py migrate
+python manage.py collectstatic
+```
+
+In the PythonAnywhere Web tab:
+
+- Set the source code directory to `/home/yourusername/mysite`
+- Set the virtualenv to `/home/yourusername/.virtualenvs/mysite-venv`
+- Set the WSGI file to import `/home/yourusername/mysite/mysite/wsgi.py`
+- Add a static files mapping from `/static/` to `/home/yourusername/mysite/staticfiles`
+- Reload the web app
+
 ## GitHub Commit Checklist
 
 - Do not commit `.env`, `.env.test`, `.env.production`, local SQLite databases, media uploads, virtual environments, or collected static files.

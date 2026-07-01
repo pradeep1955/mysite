@@ -8,7 +8,16 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "default-api-key-if-missing")
 APP_NAME = "Pleasure Web Site"
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-DEBUG = True
+
+
+def env_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+DEBUG = env_bool("DJANGO_DEBUG", True)
 
 LOGGING = {
     "version": 1,
@@ -44,7 +53,12 @@ LOGGING = {
     },
 }
 
-ALLOWED_HOSTS = ["192.168.68.57", "127.0.0.1", "0.0.0.0", "localhost"]
+default_allowed_hosts = "192.168.68.57,127.0.0.1,0.0.0.0,localhost"
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("DJANGO_ALLOWED_HOSTS", default_allowed_hosts).split(",")
+    if host.strip()
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
