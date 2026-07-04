@@ -3,20 +3,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from polls.models import Question
-
 from .models import Post
 
 
 def home(request):
-    posts = Post.objects.all()
-    latest_question_list = Question.objects.order_by("-pub_date")[:5]
-
-    context = {
-        "posts": posts,
-        "latest_question_list": latest_question_list,
-    }
-    return render(request, "blog/home.html", context)
+    posts = Post.objects.order_by("-date_posted")[:10]
+    return render(request, "blog/home.html", {"posts": posts})
 
 
 class PostListView(ListView):
@@ -67,7 +59,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    success_url = "/"
+    success_url = "/blog/"
 
     def test_func(self):
         post = self.get_object()
