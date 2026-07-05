@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{{ settings.APP_NAME|default:"Pleasure Website" }}{% endblock %}</title>
+    <title>{% block title %}{{ settings.APP_NAME|default:"TinkerStack" }}{% endblock %}</title>
 
     <meta name="dj4e" content="f119102d0355bf1f5ec71ff016c84466">
     <meta name="dj4e-code" content="42167334114282">
@@ -19,7 +19,7 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
-                <a class="navbar-brand fw-bold" href="/">{{ settings.APP_NAME|default:"Pleasure Website" }}</a>
+                <a class="navbar-brand fw-bold" href="/">{{ settings.APP_NAME|default:"TinkerStack" }}</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -60,7 +60,7 @@
     {% block footer %}
     <footer class="site-footer">
         <div class="container py-3 text-center">
-            <p class="mb-0">&copy; {% now "Y" %} {{ settings.APP_NAME|default:"Pleasure Website" }}. All Rights Reserved.</p>
+            <p class="mb-0">&copy; {% now "Y" %} {{ settings.APP_NAME|default:"TinkerStack" }}. All Rights Reserved.</p>
         </div>
     </footer>
     {% endblock %}

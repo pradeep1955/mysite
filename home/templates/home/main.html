@@ -2,49 +2,57 @@
 {% load static %}
 
 {% block content %}
-<div class="hero-card shadow-sm">
-    <div class="row align-items-center g-4">
-        <div class="col-lg-7">
-            <span class="eyebrow">Welcome to</span>
-            <h1 class="display-5 fw-bold">{{ site_name }}</h1>
-            <p class="lead">{{ message }}</p>
-            <p class="text-muted">A clean and modern space to share ideas, publish articles, and keep your online presence polished.</p>
-            <div class="d-flex flex-wrap gap-3 mt-4">
-                <a class="btn btn-primary btn-lg" href="{% url 'blog-home' %}">Explore Blog</a>
-                {% if user.is_authenticated %}
-                    <a class="btn btn-outline-secondary btn-lg" href="{% url 'post-create' %}">Write a Post</a>
-                {% else %}
-                    <a class="btn btn-outline-secondary btn-lg" href="{% url 'login' %}">Log In</a>
-                {% endif %}
-            </div>
-        </div>
-        <div class="col-lg-5">
-            <img src="{% static 'home/logoforwebsite.jpg' %}" alt="Pleasure Web Site" class="img-fluid rounded-4 shadow-sm">
-        </div>
+<header class="hero-shell">
+  <div class="hero-content">
+    <div class="eyebrow">signal in, build out</div>
+    <h1>I build with AI, wire things with my hands, and <span>write about both</span>.</h1>
+    <p class="lede">{{ message }}</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#story">Read the irrigation build</a>
+      <a class="btn btn-ghost" href="{% url 'blog-home' %}">Visit the blog</a>
     </div>
-</div>
+  </div>
+</header>
 
-<div class="row g-4 mt-2">
-    <div class="col-md-4">
-        <div class="feature-card">
-            <div class="feature-icon"><i class="fas fa-newspaper"></i></div>
-            <h3>Publish Stories</h3>
-            <p>Create and share blog posts with a focused, distraction-free experience.</p>
-        </div>
+<div class="node-marker"></div>
+
+<section class="story-card reveal" id="story">
+  <div class="story-inner">
+    <div class="eyebrow">project 001</div>
+    <h2>The balcony that watered itself</h2>
+    <div class="story-meta">
+      <span>ESP32</span>
+      <span>DS3231 RTC</span>
+      <span>Drip irrigation</span>
+      <span>Arduino</span>
     </div>
-    <div class="col-md-4">
-        <div class="feature-card">
-            <div class="feature-icon"><i class="fas fa-palette"></i></div>
-            <h3>Modern Design</h3>
-            <p>Enjoy a refined layout that feels consistent with the rest of the site.</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="feature-card">
-            <div class="feature-icon"><i class="fas fa-globe"></i></div>
-            <h3>Easy to Deploy</h3>
-            <p>Built for a lightweight Django setup that is simple to host and maintain.</p>
-        </div>
-    </div>
-</div>
+
+    <p>It started with a row of flower pots on the balcony and a familiar problem: whenever a work trip or a busy week got in the way, the plants paid for it.</p>
+    <p>The fix became a small, reliable build around an ESP32 and a real-time clock so watering could happen on a schedule without drift.</p>
+    <blockquote class="pullquote">The interesting part wasn't the watering — it was building something that quietly kept a promise every single day without me thinking about it.</blockquote>
+    <p>That same pattern drives the projects and experiments shared here: simple tools, careful engineering, and useful automation.</p>
+    <a class="story-link" href="{% url 'blog-home' %}">Read the posts →</a>
+  </div>
+</section>
+
+<div class="node-marker"></div>
+
+<section class="blog-teaser reveal">
+  <div class="blog-card">
+    <span class="tag">ML / AI</span>
+    <h3 class="post-title"><a href="{% url 'blog-home' %}">This is New Era of ML AI</a></h3>
+    <p>A look at where machine learning is already reshaping everyday life, the real controversies over AI's future, and how this very site was rebuilt with AI as a genuine collaborator.</p>
+    <a class="story-link accent-link" href="{% url 'blog-home' %}">Read the post →</a>
+  </div>
+</section>
+
+<div class="node-marker"></div>
+
+<section class="store-node reveal" id="store">
+  <div class="store-card">
+    <h3><span class="dot-flash"></span>Store — coming soon</h3>
+    <p>Parts lists, small IoT kits, and build guides for the projects featured on this site. Starting with the irrigation build above.</p>
+    <span class="tag">Notify me when it launches</span>
+  </div>
+</section>
 {% endblock content %}
