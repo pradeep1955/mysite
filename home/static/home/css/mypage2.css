@@ -1,104 +1,86 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #eef4ff 100%);
+    color: #1f2937;
 }
-header {
-    background-color: #808080;
-    color: white;
-    padding: 1em 0;
-    text-align: center;
+
+.site-header {
+    background: linear-gradient(90deg, #0f4c81 0%, #2563eb 100%);
+    box-shadow: 0 4px 20px rgba(15, 76, 129, 0.18);
 }
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
+
+.navbar-dark .navbar-brand,
+.navbar-dark .nav-link {
+    color: #f8fafc;
 }
-nav {
-    display: flex;
-    justify-content: center;
-    padding: 1em 0;
-    background: #333;
+
+.navbar-dark .nav-link:hover,
+.navbar-dark .nav-link:focus {
+    color: #dbeafe;
 }
-nav a {
-    color: white;
-    padding: 0 1em;
-    text-decoration: none;
+
+.hero-card {
+    background: #ffffff;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+.eyebrow {
+    display: inline-block;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
+    color: #2563eb;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
 }
-nav a:hover {
-    background: #808080;
-    color: white;
+
+.feature-card {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+    height: 100%;
 }
-.landing {
-    background: url('https://via.placeholder.com/1500x500') no-repeat center center/cover;
-    height: 500px;
-    display: flex;
-    justify-content: center;
+
+.feature-icon {
+    width: 46px;
+    height: 46px;
+    display: inline-flex;
     align-items: center;
-    color: white;
-    text-align: center;
-}
-.landing h1 {
-    font-size: 4em;
-    margin: 0;
-}
-.section {
-    padding: 2em 0;
-}
-.section h2 {
-    text-align: center;
-    margin-bottom: 1em;
-}
-.section p {
-    width: 70%;
-    margin: auto;
-    line-height: 1.6;
-}
-.album {
-    display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 1em;
-}
-.album .folder {
-    background: white;
-    border: 1px solid #ddd;
-    padding: 1em;
-    width: 300px;
-}
-.album img, .album video {
-    width: 100%;
-    height: auto;
-}
-.album h3 {
-    text-align: center;
-    margin-top: 0;
-}
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 1em 0;
-    position: relative;
-    width: 100%;
-}
-.message.user { text-align: right; color: blue; }
-.message.bot { text-align: left; color: green; }
-
-
-.page-header-custom {
-    background-color: #808080; /* A dark, modern grey */
-    color: white;              /* Sets the font color to white */
-    padding: 30px;             /* Adds comfortable spacing inside the box */
-    border-radius: 8px;        /* Gives it slightly rounded corners */
-    margin-bottom: 30px;       /* Adds space below the header */
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #2563eb;
+    font-size: 1.1rem;
+    margin-bottom: 0.9rem;
 }
 
-/* This makes the main heading inside the header a bit larger */
-.page-header-custom h3 {
-    margin-top: 0;
-    font-size: 24px;
+.site-footer {
+    background: #0f172a;
+    color: #e2e8f0;
+    margin-top: 2rem;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+.btn-outline-secondary {
+    color: #334155;
+    border-color: #cbd5e1;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
 }

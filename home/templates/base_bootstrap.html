@@ -1,85 +1,71 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{% block title %}{{ settings.APP_NAME|default:"Pleasure Website" }}{% endblock %}</title>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ settings.APP_NAME|default:"Pleasure Website" }}{% endblock %}</title>
 
     <meta name="dj4e" content="f119102d0355bf1f5ec71ff016c84466">
     <meta name="dj4e-code" content="42167334114282">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" crossorigin="anonymous">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/v4-shims.css">
-
     <link rel="stylesheet" href="{% static 'home/css/mypage2.css' %}">
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" crossorigin="anonymous"></script>
 
     {% block head %}{% endblock %}
 </head>
-
-<body>
-
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">{{ settings.APP_NAME|default:"Pleasure Website" }}</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav">
-        <li><a href="/">Home</a></li>
-        <li><a href="/blog">Blog</a></li>
-        <li><a href="/polls">Polls</a></li>
-        <li><a href="/ads">Ads</a></li>
-      </ul>
-
-      <ul class="nav navbar-nav navbar-right">
-        {% if user.is_authenticated %}
-          <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-        {% else %}
-          <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-        {% endif %}
-      </ul>
-    </div></div></nav>
-<div class="container">
-    
-    {% block messages %}
-        {% if messages %}
-            {% for msg in messages %}
-                <div class="alert alert-{{msg.level_tag}}" role="alert">
-                {{msg.message}}
+<body class="d-flex flex-column min-vh-100">
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="/">{{ settings.APP_NAME|default:"Pleasure Website" }}</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="main-navbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/blog">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/blog/about">About</a></li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        {% endif %}
+                    </ul>
                 </div>
-            {% endfor %}
-        {% endif %}
-    {% endblock %}
+            </div>
+        </nav>
+    </header>
 
-    {% block content %}
-    {% endblock %}
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+            {% block messages %}
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div class="alert alert-{{ msg.level_tag }}" role="alert">
+                            {{ msg.message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endblock %}
 
-</div>{% block footer %}
-    <footer class="text-center" style="padding: 20px;">
-        <p>&copy; {% now "Y" %} {{ settings.APP_NAME|default:"Pleasure Website" }}. All Rights Reserved.</p>
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% block footer %}
+    <footer class="site-footer">
+        <div class="container py-3 text-center">
+            <p class="mb-0">&copy; {% now "Y" %} {{ settings.APP_NAME|default:"Pleasure Website" }}. All Rights Reserved.</p>
+        </div>
     </footer>
-{% endblock %}
-
-    
-    {% block scripts %}
     {% endblock %}
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
