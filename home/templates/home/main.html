@@ -38,12 +38,20 @@
 <div class="node-marker"></div>
 
 <section class="blog-teaser">
+  {% if latest_post %}
   <div class="blog-card">
-    <span class="tag">ML / AI</span>
-    <h3 class="post-title"><a href="{% url 'blog-home' %}">This is New Era of ML AI</a></h3>
-    <p>A look at where machine learning is already reshaping everyday life, the real controversies over AI's future, and how this very site was rebuilt with AI as a genuine collaborator.</p>
-    <a class="story-link accent-link" href="{% url 'blog-home' %}">Read the post →</a>
+    <span class="tag">Latest post</span>
+    <h3 class="post-title">
+      <a href="{% url 'post-detail' latest_post.pk %}">{{ latest_post.title }}</a>
+    </h3>
+    <p>{{ latest_post.content|truncatewords:30 }}</p>
+    <a class="story-link accent-link" href="{% url 'post-detail' latest_post.pk %}">Read the post →</a>
   </div>
+  {% else %}
+  <div class="blog-card">
+    <p>No posts yet — the first one is coming soon.</p>
+  </div>
+  {% endif %}
 </section>
 
 <div class="node-marker"></div>
