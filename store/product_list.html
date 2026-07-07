@@ -1,0 +1,57 @@
+{% extends "base_bootstrap.html" %}
+{% load static %}
+
+{% block title %}Parts — TinkerStack Store{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'store/css/store.css' %}">
+{% endblock %}
+
+{% block content %}
+<header class="hero-shell">
+  <div class="hero-content">
+    <div class="eyebrow">parts catalog</div>
+    <h1>Every part, <span>sourced already</span>.</h1>
+    <p class="lede">The exact components used across every TinkerStack build. Affiliate links where available — no markup, just what I actually use.</p>
+  </div>
+</header>
+
+<div class="node-marker"></div>
+
+<section class="store-section">
+  <div class="store-wrap">
+    <div class="category-row">
+      <a class="category-chip {% if not active_category %}active{% endif %}" href="{% url 'store:product-list' %}">All</a>
+      {% for category in categories %}
+      <a class="category-chip {% if active_category == category.slug %}active{% endif %}" href="?category={{ category.slug }}">{{ category.name }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="product-grid">
+      {% for product in products %}
+      <div class="product-card">
+        <span class="tag">{{ product.category.name }}</span>
+        <h3>{{ product.name }}</h3>
+        <p class="product-spec">{{ product.specification }}</p>
+        <span class="product-price">{{ product.price_display }}</span>
+        {% if product.affiliate_url %}
+        <a class="btn btn-ghost" href="{{ product.affiliate_url }}" target="_blank" rel="noopener sponsored">Buy →</a>
+        {% else %}
+        <span class="product-unsourced">Link coming soon</span>
+        {% endif %}
+      </div>
+      {% empty %}
+      <p>No parts published yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="pagination-row">
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}">← Prev</a>{% endif %}
+      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}">Next →</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

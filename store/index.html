@@ -1,0 +1,62 @@
+{% extends "base_bootstrap.html" %}
+{% load static %}
+
+{% block title %}Store — TinkerStack{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'store/css/store.css' %}">
+{% endblock %}
+
+{% block content %}
+<header class="hero-shell">
+  <div class="hero-content">
+    <div class="eyebrow">parts &amp; kits</div>
+    <h1>Buy what's <span>actually in the builds</span>.</h1>
+    <p class="lede">Every kit here is a real project from the blog — same parts list, same wiring notes. Most are still gathering interest before the first batch ships.</p>
+  </div>
+</header>
+
+<div class="node-marker"></div>
+
+<section class="store-section">
+  <div class="store-wrap">
+    <div class="eyebrow">project kits</div>
+    <div class="kit-grid">
+      {% for kit in kits %}
+      <a class="kit-card" href="{{ kit.get_absolute_url }}">
+        <span class="tag status-{{ kit.status }}">
+          {% if kit.status == 'coming_soon' %}Coming soon
+          {% elif kit.status == 'preorder' %}Open for preorder
+          {% elif kit.status == 'live' %}Available now
+          {% endif %}
+        </span>
+        <h3>{{ kit.name }}</h3>
+        <p>{{ kit.tagline|default:kit.summary|truncatewords:22 }}</p>
+        <span class="kit-price">{{ kit.total_price_display }}</span>
+      </a>
+      {% empty %}
+      <div class="store-empty">
+        <p>No kits published yet — check back soon.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="node-marker"></div>
+
+<section class="store-section">
+  <div class="store-wrap">
+    <div class="eyebrow">browse by category</div>
+    <div class="category-row">
+      {% for category in categories %}
+      <a class="category-chip" href="{% url 'store:product-list' %}?category={{ category.slug }}">{{ category.name }}</a>
+      {% endfor %}
+    </div>
+    <p class="store-note">
+      Individual parts link out to where I actually source them — no markup, just the same links I use myself.
+      <a href="{% url 'store:product-list' %}">See all parts →</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

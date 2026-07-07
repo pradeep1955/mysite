@@ -1,0 +1,104 @@
+{% extends "base_bootstrap.html" %}
+{% load static %}
+
+{% block title %}{{ kit.name }} — TinkerStack Store{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'store/css/store.css' %}">
+{% endblock %}
+
+{% block content %}
+<header class="hero-shell kit-hero">
+  <div class="hero-content">
+    <div class="eyebrow">
+      {% if kit.status == 'coming_soon' %}coming soon
+      {% elif kit.status == 'preorder' %}open for preorder
+      {% elif kit.status == 'live' %}available now
+      {% endif %}
+    </div>
+    <h1>{{ kit.name }}</h1>
+    <p class="lede">{{ kit.summary }}</p>
+    <div class="cta-row">
+      <span class="kit-price-big">{{ kit.total_price_display }}</span>
+      {% if kit.blog_post_url %}
+      <a class="btn btn-ghost" href="{{ kit.blog_post_url }}">Read the full build →</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+{% if kit.video_url %}
+<div class="node-marker"></div>
+<section class="store-section">
+  <div class="store-wrap kit-video">
+    <iframe src="{{ kit.video_url }}" frameborder="0" allowfullscreen></iframe>
+  </div>
+</section>
+{% endif %}
+
+<div class="node-marker"></div>
+
+<section class="story-card">
+  <div class="story-inner">
+    <div class="eyebrow">how it works</div>
+    <h2>{{ kit.tagline }}</h2>
+    <p>{{ kit.full_description|linebreaks }}</p>
+  </div>
+</section>
+
+<div class="node-marker"></div>
+
+<section class="store-section">
+  <div class="store-wrap">
+    <div class="eyebrow">parts list</div>
+    <table class="bom-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Spec</th>
+          <th>Category</th>
+          <th>Qty</th>
+          <th>Est. price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for kc in components %}
+        <tr>
+          <td>{{ kc.product.name }}{% if kc.note %}<span class="bom-note"> — {{ kc.note }}</span>{% endif %}</td>
+          <td>{{ kc.product.specification }}</td>
+          <td>{{ kc.product.category.name }}</td>
+          <td>{{ kc.quantity }}</td>
+          <td>{{ kc.product.price_display }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4">Estimated total</td>
+          <td>{{ kit.total_price_display }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</section>
+
+<div class="node-marker"></div>
+
+<section class="store-section" id="preorder">
+  <div class="store-wrap">
+    <div class="preorder-card">
+      <h3>Interested? Get on the list</h3>
+      <p>No payment gateway yet — just leave your details and I'll reach out directly (UPI/WhatsApp) once a batch is ready.</p>
+      <form method="post" action="{% url 'store:preorder' kit.slug %}" class="preorder-form">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="tel" name="phone" placeholder="Phone (optional)">
+        <input type="number" name="quantity" value="1" min="1" placeholder="Quantity">
+        <textarea name="message" placeholder="Anything specific you'd like to ask? (optional)"></textarea>
+        <button type="submit" class="btn btn-primary">Notify me</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
