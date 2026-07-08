@@ -1,0 +1,104 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'assistant/css/widget.css' %}">
+
+<div id="ts-chat-widget">
+  <button id="ts-chat-toggle" aria-label="Open assistant">
+    <span id="ts-chat-icon">💬</span>
+  </button>
+
+  <div id="ts-chat-panel" class="hidden">
+    <div class="ts-chat-header">
+      <span>Ask about a build</span>
+      <button id="ts-chat-close" aria-label="Close">×</button>
+    </div>
+    <div id="ts-chat-log">
+      <div class="ts-msg ts-msg-bot">
+        Ask me about parts, wiring, or which board to use — I'll point you to the right part if I can.
+      </div>
+    </div>
+    <form id="ts-chat-form">
+      <input type="text" id="ts-chat-input" placeholder="e.g. which pump for drip irrigation?" autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  const askUrl = "{% url 'assistant:ask' %}";
+  const toggle = document.getElementById('ts-chat-toggle');
+  const panel = document.getElementById('ts-chat-panel');
+  const closeBtn = document.getElementById('ts-chat-close');
+  const form = document.getElementById('ts-chat-form');
+  const input = document.getElementById('ts-chat-input');
+  const log = document.getElementById('ts-chat-log');
+
+  function getCookie(name) {
+    const match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return match ? match.pop() : '';
+  }
+
+  function addMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = 'ts-msg ts-msg-' + sender;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function addProducts(products) {
+    if (!products || !products.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'ts-msg ts-msg-products';
+    products.forEach(function (p) {
+      const link = document.createElement('a');
+      link.className = 'ts-product-chip';
+      link.textContent = p.name + (p.price ? ' — ' + p.price : '');
+      if (p.url) {
+        link.href = p.url;
+        link.target = '_blank';
+        link.rel = 'noopener sponsored';
+      } else {
+        link.href = '#';
+        link.classList.add('ts-no-link');
+        link.title = 'Link coming soon';
+      }
+      wrap.appendChild(link);
+    });
+    log.appendChild(wrap);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  toggle.addEventListener('click', function () {
+    panel.classList.toggle('hidden');
+  });
+  closeBtn.addEventListener('click', function () {
+    panel.classList.add('hidden');
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+    addMessage(message, 'user');
+    input.value = '';
+
+    fetch(askUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken'),
+      },
+      body: JSON.stringify({ message: message }),
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        addMessage(data.answer, 'bot');
+        addProducts(data.products);
+      })
+      .catch(function () {
+        addMessage("Something went wrong — try again in a moment.", 'bot');
+      });
+  });
+})();
+</script>

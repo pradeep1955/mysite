@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_APPS += ["store"]
+INSTALLED_APPS += ["assistant"]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
