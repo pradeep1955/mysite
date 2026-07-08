@@ -1,15 +1,16 @@
-{% extends 'blog/base.html' %}
+{% extends "base_bootstrap.html" %}
+
+{% block title %}Write a post — {{ settings.APP_NAME|default:"TinkerStack" }}{% endblock %}
+
 {% block content %}
-  <div class="content-section">
-    <form method="POST" action="">
+<section class="store-section">
+  <div class="store-wrap preorder-card" style="max-width:640px;">
+    <h3>Blog post</h3>
+    <form method="POST" action="" class="preorder-form">
       {% csrf_token %}
-      <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Blog Post</legend>
-        {{ form.as_p }}
-      </fieldset>
-      <div class="form-group">
-        <button class="btn btn-outline-info" type="submit">Post</button>
-      </div>
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit">Post</button>
     </form>
   </div>
+</section>
 {% endblock %}

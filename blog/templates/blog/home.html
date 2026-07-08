@@ -1,39 +1,55 @@
-  {% extends 'blog/base.html' %}
-  {% block content %}
+{% extends "base_bootstrap.html" %}
+
+{% block title %}Blog — {{ settings.APP_NAME|default:"TinkerStack" }}{% endblock %}
+
+{% block content %}
+<header class="hero-shell">
+  <div class="hero-content">
+    <div class="eyebrow">the blog</div>
+    <h1>Builds, <span>write-ups, and lessons learned</span>.</h1>
+    <p class="lede">Project posts, wiring notes, and the occasional AI/ML tangent — same voice as the home page, more room to go deep.</p>
+  </div>
+</header>
+
+<div class="node-marker"></div>
+
+<section class="store-section">
+  <div class="store-wrap">
     {% for post in posts %}
-    <article class="media content-section">
-			<img class = "rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-			<div class="media-body">
-		    <div class="article-metadata">
-		      <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
-		      <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
-		    </div>
-				<h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-				<p class="article-content">{{ post.content }}</p>
-		  </div>
-		</article>
+    <article class="blog-card mb-4">
+      <span class="tag">
+        <a href="{% url 'user-posts' post.author.username %}" style="color:inherit; text-decoration:none;">{{ post.author }}</a>
+        &middot; {{ post.date_posted|date:"F d, Y" }}
+      </span>
+      <h3 class="post-title"><a href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h3>
+      <p style="white-space:pre-line;">{{ post.content|truncatewords:40 }}</p>
+      <a class="story-link" href="{% url 'post-detail' post.id %}">Read the post →</a>
+    </article>
+    {% empty %}
+    <p class="lede">No posts yet — the first one is on its way.</p>
     {% endfor %}
 
-		{% if is_paginated %}
+    {% if is_paginated %}
+    <div class="pagination-row">
+      {% if page_obj.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
 
-		{% if page_obj.has_previous %}
-        <a class = "btn btn-outline-info mb-4" href="?page=1">First</a>
-				<a class = "btn btn-outline-info mb-4" href="?page={ page_obj.previous_page_number }">Previous</a>
-		{% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <span class="tag">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
 
-		{% for num in page_obj.paginator.page_range %}
-		{% if page_obj.number == num %}
-		   <a class = "btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
-		{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-		   <a class = "btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a> 
-		{% endif %}
-		{% endfor %}
-
-		{% if page_obj.has_next %}
-        <a class = "btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-				<a class = "btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-		{% endif %}
-
-		{% endif %}
-  {% endblock %} 
-  
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

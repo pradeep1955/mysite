@@ -1,15 +1,19 @@
-{% extends 'blog/base.html' %}
-  {% block content %}
-  <div class="content-section">
+{% extends "base_bootstrap.html" %}
+
+{% block title %}Delete post — {{ settings.APP_NAME|default:"TinkerStack" }}{% endblock %}
+
+{% block content %}
+<section class="store-section">
+  <div class="store-wrap preorder-card" style="max-width:560px; text-align:center;">
+    <h3>Delete this post?</h3>
+    <p>Are you sure you want to delete "{{ object.title }}"? This can't be undone.</p>
     <form method="POST" action="">
       {% csrf_token %}
-      <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Delete Post</legend>
-        <h2>Are you sure you want to delete the post {{ object.title }}</h2>
-      </fieldset>
-      <div class="form-group">
-        <button class="btn btn-outline-danger" type="submit">Yes, Delete</button>
-        <a class="btn btn-outline-secondary" href="{% url 'post-detail' object.id %}">Cancel</a>
+      <div class="cta-row">
+        <button class="btn btn-primary" type="submit">Yes, delete</button>
+        <a class="btn btn-ghost" href="{% url 'post-detail' object.id %}">Cancel</a>
       </div>
     </form>
-  {% endblock %}
+  </div>
+</section>
+{% endblock %}
