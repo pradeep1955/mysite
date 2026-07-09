@@ -3,6 +3,9 @@ from django.views import View
 
 from blog.models import Post
 
+from django.views.generic import TemplateView
+
+
 
 class HomeView(View):
     def get(self, request):
@@ -16,3 +19,6 @@ class HomeView(View):
                 "latest_post": latest_post,
             },
         )
+    
+class PrivacyPolicyView(TemplateView):
+    template_name = "home/privacy.html"    
