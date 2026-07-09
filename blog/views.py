@@ -5,18 +5,30 @@ from django.views.generic import CreateView, DeleteView, DetailView, ListView, U
 
 from .models import Post
 
+from datetime import datetime
+from django.utils import timezone
+
+cutoff = timezone.make_aware(datetime(2026, 4, 1))
 
 def home(request):
-    posts = Post.objects.order_by("-date_posted")[:10]
+    posts = Post.objects.filter(
+        date_posted__gte=cutoff
+    ).order_by("-date_posted")[:10]
     return render(request, "blog/home.html", {"posts": posts})
-
 
 class PostListView(ListView):
     model = Post
     template_name = "blog/home.html"
     context_object_name = "posts"
-    ordering = ["-date_posted"]
     paginate_by = 5
+
+    def get_queryset(self):
+        return Post.objects.filter(
+            date_posted__gte=cutoff
+        ).order_by("-date_posted")
+
+
+
 
 
 class UserPostListView(ListView):
