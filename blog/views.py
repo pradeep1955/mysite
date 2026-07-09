@@ -8,7 +8,7 @@ from .models import Post
 from datetime import datetime
 from django.utils import timezone
 
-cutoff = timezone.make_aware(datetime(2026, 4, 1))
+cutoff = timezone.make_aware(datetime(2026, 7, 1))
 
 def home(request):
     posts = Post.objects.filter(
