@@ -2,6 +2,8 @@ from django.db import models
 
 from store.models import Product
 
+import re
+
 
 class Intent(models.Model):
     """
@@ -41,8 +43,12 @@ class Intent(models.Model):
         return [k.strip().lower() for k in self.keywords.split(",") if k.strip()]
 
     def score(self, message_lower):
-        """Count how many of this intent's keywords appear in the message."""
-        return sum(1 for kw in self.keyword_list() if kw in message_lower)
+        """Count keyword hits, matched as whole words/phrases, not substrings."""
+        score = 0
+        for kw in self.keyword_list():
+            if re.search(r'\b' + re.escape(kw) + r'\b', message_lower):
+                score += 1
+        return score
 
 
 class ChatQuery(models.Model):
