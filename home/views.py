@@ -3,6 +3,12 @@ from django.views import View
 
 from blog.models import Post
 
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.views.generic import TemplateView
+
+from .models import Subscriber
+
 from django.views.generic import TemplateView
 
 
@@ -20,5 +26,26 @@ class HomeView(View):
             },
         )
     
+
+
+
+class SubscribeView(View):
+    def post(self, request):
+        email = request.POST.get("email", "").strip()
+        source = request.POST.get("source", "").strip()
+        next_url = request.POST.get("next") or "/"
+
+        if not email:
+            messages.error(request, "Please enter an email address.")
+            return redirect(next_url)
+
+        _, created = Subscriber.objects.get_or_create(email=email, defaults={"source": source})
+        if created:
+            messages.success(request, "You're in — I'll email you when something new ships.")
+        else:
+            messages.success(request, "You're already on the list!")
+
+        return redirect(next_url)
+
 class PrivacyPolicyView(TemplateView):
     template_name = "home/privacy.html"    
