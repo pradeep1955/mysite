@@ -1,0 +1,12 @@
+{# include with: {% include "home/_subscribe_form.html" with source="homepage" %} #}
+<div class="preorder-card" style="max-width:480px;">
+  <h3>Get notified about new builds</h3>
+  <p>New projects, new kits, occasionally an AI/ML tangent. No spam, unsubscribe any time.</p>
+  <form method="post" action="{% url 'subscribe' %}" class="preorder-form">
+    {% csrf_token %}
+    <input type="email" name="email" placeholder="you@example.com" required>
+    <input type="hidden" name="source" value="{{ source|default:'unknown' }}">
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <button type="submit" class="btn btn-primary">Notify me</button>
+  </form>
+</div>
