@@ -11,10 +11,9 @@ from django.utils import timezone
 cutoff = timezone.make_aware(datetime(2026, 7, 1))
 
 def home(request):
-    posts = Post.objects.filter(
-        date_posted__gte=cutoff
-    ).order_by("-date_posted")[:10]
+    posts = Post.objects.filter(is_hidden=False).order_by("-date_posted")[:10]
     return render(request, "blog/home.html", {"posts": posts})
+
 
 class PostListView(ListView):
     model = Post
@@ -23,9 +22,7 @@ class PostListView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        return Post.objects.filter(
-            date_posted__gte=cutoff
-        ).order_by("-date_posted")
+        return Post.objects.filter(is_hidden=False).order_by("-date_posted")
 
 
 
