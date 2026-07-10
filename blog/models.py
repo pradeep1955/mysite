@@ -9,6 +9,11 @@ class Post(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_hidden = models.BooleanField(
+        default=False,
+        help_text="Hides this post from the public blog list and detail page. "
+                   "Still visible to you in admin and when logged in as the author."
+    )
 
     def __str__(self):
         return self.title
