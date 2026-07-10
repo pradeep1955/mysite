@@ -68,7 +68,14 @@
           <td>{{ kc.product.specification }}</td>
           <td>{{ kc.product.category.name }}</td>
           <td>{{ kc.quantity }}</td>
-          <td>{{ kc.product.price_display }}</td>
+          <td>
+            {{ kc.product.price_display }}
+            {% if kc.product.affiliate_url %}
+            <a href="{{ kc.product.affiliate_url }}" target="_blank" rel="noopener sponsored" class="tag" style="margin-left:8px;">Buy →</a>
+            {% else %}
+            <span class="product-unsourced">soon</span>
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
