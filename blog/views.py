@@ -43,8 +43,17 @@ class UserPostListView(ListView):
         return Post.objects.filter(author=user).order_by("-date_posted")
 
 
+from django.http import Http404
+
+
 class PostDetailView(DetailView):
     model = Post
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.is_hidden and obj.author != self.request.user:
+            raise Http404("Post not found")
+        return obj
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
