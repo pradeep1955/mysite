@@ -57,6 +57,12 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    reason = models.CharField(
+        max_length=200, blank=True,
+        help_text="Optional: why you personally use this one. Shown on the product card. "
+                   "This is what keeps 'Tools' feeling curated instead of generic."
+    )
+
     class Meta:
         ordering = ["category__order", "name"]
 
@@ -76,6 +82,7 @@ class Product(models.Model):
         if self.price_min == self.price_max:
             return f"₹{self.price_min}"
         return f"₹{self.price_min}–{self.price_max}"
+    
 
 
 class ProjectKit(models.Model):

@@ -39,6 +39,8 @@
         {% else %}
         <span class="product-unsourced">Link coming soon</span>
         {% endif %}
+        <p class="product-spec">{{ product.specification }}</p>
+        {% if product.reason %}<p class="product-spec" style="font-style:italic; color:var(--amber);">"{{ product.reason }}"</p>{% endif %}
       </div>
       {% empty %}
       <p>No parts published yet.</p>
