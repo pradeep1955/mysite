@@ -10,6 +10,9 @@
       &middot; {{ object.date_posted|date:"F d, Y" }}
     </div>
     <h2>{{ object.title }}</h2>
+    {% if object.image %}
+    <img src="{{ object.image.url }}" alt="{{ object.title }}" style="width:100%; border-radius:6px; margin-bottom:24px;">
+    {% endif %}
     <p style="white-space:pre-line;">{{ object.content }}</p>
 
     {% if object.author == user %}
