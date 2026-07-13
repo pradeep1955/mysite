@@ -9,6 +9,7 @@ class Post(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="blog/posts/", blank=True, null=True)
     is_hidden = models.BooleanField(
         default=False,
         help_text="Hides this post from the public blog list and detail page. "

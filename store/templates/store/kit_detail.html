@@ -26,6 +26,12 @@
     </div>
   </div>
 </header>
+{% if kit.cover_image %}
+<div class="node-marker"></div>
+<section class="store-section"><div class="store-wrap">
+  <img src="{{ kit.cover_image.url }}" alt="{{ kit.name }}" style="width:100%; border-radius:6px;">
+</div></section>
+{% endif %}
 
 {% if kit.video_url %}
 <div class="node-marker"></div>
