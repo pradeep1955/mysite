@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0001_initial'),
+        ('blog', '0002_post_is_hidden'),
     ]
 
     operations = [
@@ -14,10 +14,5 @@ class Migration(migrations.Migration):
             model_name='post',
             name='image',
             field=models.ImageField(blank=True, null=True, upload_to='blog/posts/'),
-        ),
-        migrations.AddField(
-            model_name='post',
-            name='is_hidden',
-            field=models.BooleanField(default=False, help_text='Hides this post from the public blog list and detail page. Still visible to you in admin and when logged in as the author.'),
         ),
     ]
