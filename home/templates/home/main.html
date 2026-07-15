@@ -27,12 +27,22 @@
       <span>Arduino</span>
     </div>
 
-    <p>It started with a row of flower pots on the balcony and a familiar problem: whenever a work trip or a busy week got in the way, the plants paid for it.</p>
-    <p>The fix became a small, reliable build around an ESP32 and a real-time clock so watering could happen on a schedule without drift.</p>
-    <blockquote class="pullquote">The interesting part wasn't the watering — it was building something that quietly kept a promise every single day without me thinking about it.</blockquote>
-    <p>That same pattern drives the projects and experiments shared here: simple tools, careful engineering, and useful automation.</p>
-    <a class="story-link" href="{% url 'blog-home' %}">Read the posts →</a>
-  </div>
+    <!-- Wrap this entire card in an if-statement safely -->
+    {% if latest_post %}
+    <div class="blog-card">
+      <span class="tag">Latest post</span>
+      {% if latest_post.image %}
+      <img src="{{ latest_post.image.url }}" alt="{{ latest_post.title }}" style="width:100%; border-radius:6px; margin:12px 0;">
+      {% endif %}
+      <h3 class="post-title">
+        <a href="{% url 'post-detail' latest_post.pk %}">{{ latest_post.title }}</a>
+      </h3>
+      <p>{{ latest_post.content|truncatewords:30 }}</p>
+      <a class="story-link accent-link" href="{% url 'post-detail' latest_post.pk %}">Read the post →</a>
+    </div>
+    {% endif %}
+
+  </div> 
 </section>
 
 <div class="node-marker"></div>
