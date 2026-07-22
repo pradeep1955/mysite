@@ -8,6 +8,7 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 APP_NAME = "TinkerStack"
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key")
+SENSOR_API_KEY = os.getenv("SENSOR_API_KEY", "")
 
 
 def env_bool(name, default=False):

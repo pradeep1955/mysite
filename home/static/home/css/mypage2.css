@@ -221,6 +221,56 @@ body {
     color: #3A4556;
 }
 
+.sensor-panel {
+    border: 1px solid rgba(15,42,67,0.16);
+    border-radius: 6px;
+    padding: 24px;
+    margin: 30px 0;
+    background: rgba(255,255,255,0.38);
+}
+
+.sensor-panel h3 {
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    margin: 10px 0 18px;
+    color: var(--blueprint);
+}
+
+.sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.sensor-reading {
+    border: 1px solid rgba(15,42,67,0.14);
+    border-radius: 6px;
+    padding: 16px;
+    background: rgba(237,230,211,0.74);
+}
+
+.sensor-reading span,
+.sensor-updated,
+.sensor-empty {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: #5B6677;
+}
+
+.sensor-reading strong {
+    display: block;
+    font-family: var(--mono);
+    font-size: 1.45rem;
+    line-height: 1.2;
+    margin-top: 8px;
+    color: var(--ink);
+}
+
+.sensor-updated,
+.sensor-empty {
+    margin: 16px 0 0;
+}
+
 .story-link {
     font-family: var(--mono);
     font-size: 0.88rem;
@@ -344,6 +394,7 @@ body {
 @media (max-width: 640px) {
     .hero-shell { padding: 64px 20px 48px; }
     .story-card { margin: 0 12px; padding: 48px 20px; }
+    .sensor-grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

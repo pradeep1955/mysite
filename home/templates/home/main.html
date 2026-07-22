@@ -27,6 +27,28 @@
       <span>Arduino</span>
     </div>
 
+    <div class="sensor-panel">
+      <div>
+        <span class="tag">Live sensor</span>
+        <h3>ESP8266 balcony feed</h3>
+      </div>
+      {% if latest_sensor %}
+      <div class="sensor-grid">
+        <div class="sensor-reading">
+          <span>Temperature</span>
+          <strong>{{ latest_sensor.temperature|floatformat:1 }} °C</strong>
+        </div>
+        <div class="sensor-reading">
+          <span>Humidity</span>
+          <strong>{{ latest_sensor.humidity|floatformat:1 }} %</strong>
+        </div>
+      </div>
+      <p class="sensor-updated">Last updated {{ latest_sensor.timestamp|date:"M j, Y, g:i A" }}</p>
+      {% else %}
+      <p class="sensor-empty">Waiting for the first ESP8266 reading.</p>
+      {% endif %}
+    </div>
+
     <!-- Wrap this entire card in an if-statement safely -->
     {% if latest_post %}
     <div class="blog-card">
