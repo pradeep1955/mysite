@@ -42,6 +42,10 @@
           <span>Humidity</span>
           <strong>{{ latest_sensor.humidity|floatformat:1 }} %</strong>
         </div>
+        <div class="sensor-reading">
+          <span>Air quality</span>
+          <strong>{{ latest_sensor.air_quality|default_if_none:"--" }}</strong>
+        </div>
       </div>
       <p class="sensor-updated">Last updated {{ latest_sensor.timestamp|date:"M j, Y, g:i A" }}</p>
       {% else %}

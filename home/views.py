@@ -68,6 +68,7 @@ def sensor_data_api(request):
                 "status": "ok",
                 "temperature": latest_sensor.temperature,
                 "humidity": latest_sensor.humidity,
+                "air_quality": latest_sensor.air_quality,
                 "timestamp": latest_sensor.timestamp.isoformat(),
             }
         )
@@ -87,11 +88,12 @@ def sensor_data_api(request):
     try:
         temperature = float(payload["temperature"])
         humidity = float(payload["humidity"])
+        air_quality = int(payload["air_quality"])
     except (KeyError, TypeError, ValueError):
         return JsonResponse(
             {
                 "status": "error",
-                "message": "Send numeric temperature and humidity values.",
+                "message": "Send numeric temperature, humidity, and air_quality values.",
             },
             status=400,
         )
@@ -99,6 +101,7 @@ def sensor_data_api(request):
     reading = SensorReading.objects.create(
         temperature=temperature,
         humidity=humidity,
+        air_quality=air_quality,
     )
 
     return JsonResponse(

@@ -5,9 +5,13 @@ class SensorReading(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     temperature = models.FloatField()
     humidity = models.FloatField()
+    air_quality = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.timestamp}: {self.temperature}°C / {self.humidity}%"
+        return (
+            f"{self.timestamp}: {self.temperature}°C / "
+            f"{self.humidity}% / AQ {self.air_quality}"
+        )
 
 class Subscriber(models.Model):
     email = models.EmailField(unique=True)
