@@ -25,7 +25,6 @@
       {% for kit in kits %}
       <a class="kit-card" href="{{ kit.get_absolute_url }}">
         <span class="tag status-{{ kit.status }}">
-          {% if kit.cover_image %} {{ kit.name }} {% endif %} 
           {% if kit.status == 'coming_soon' %}Coming soon
           {% elif kit.status == 'preorder' %}Open for preorder
           {% elif kit.status == 'live' %}Available now
