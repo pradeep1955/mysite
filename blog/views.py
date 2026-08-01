@@ -11,6 +11,8 @@ from django.utils import timezone
 import json
 from django.utils.html import escapejs
 
+from store.models import ProjectKit   # NEW
+
 cutoff = timezone.make_aware(datetime(2026, 7, 1))
 
 def home(request):
@@ -59,6 +61,8 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         post = self.object
+
+        # --- JSON-LD Article schema (from the SEO fix) ---
         image_url = self.request.build_absolute_uri(post.image.url) if post.image else None
         schema = {
             "@context": "https://schema.org",
@@ -77,9 +81,24 @@ class PostDetailView(DetailView):
         }
         if image_url:
             schema["image"] = [image_url]
-        # escape </script> so a stray substring in content can't break out of the tag
         ctx["ld_json"] = json.dumps(schema).replace("</", "<\\/")
-        return ctx
+
+        # --- CTA block: matching kit + related posts (new) ---
+        post_path = post.get_absolute_url()  # e.g. /blog/post/40/
+        ctx["matching_kit"] = (
+            ProjectKit.objects
+            .exclude(status=ProjectKit.STATUS_DRAFT)
+            .filter(blog_post_url__icontains=post_path)
+            .first()
+        )
+        ctx["related_posts"] = (
+            Post.objects
+            .filter(is_hidden=False)
+            .exclude(pk=post.pk)
+            .order_by("-date_posted")[:2]
+        )
+
+        return ctx  
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
