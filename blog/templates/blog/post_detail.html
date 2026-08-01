@@ -1,6 +1,11 @@
 {% extends "base_bootstrap.html" %}
 
 {% block title %}{{ object.title }} — {{ settings.APP_NAME|default:"TinkerStack" }}{% endblock %}
+{% block meta_description %}{{ object.seo_description }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">{{ ld_json|safe }}</script>
+{% endblock %}
 
 {% block content %}
 <section class="story-card">
@@ -9,7 +14,7 @@
       <a href="{% url 'user-posts' object.author.username %}" style="color:inherit; text-decoration:none;">{{ object.author }}</a>
       &middot; {{ object.date_posted|date:"F d, Y" }}
     </div>
-    <h2>{{ object.title }}</h2>
+    <h1>{{ object.title }}</h1>
     {% if object.image %}
     <img src="{{ object.image.url }}" alt="{{ object.title }}" style="width:100%; border-radius:6px; margin-bottom:24px;">
     {% endif %}

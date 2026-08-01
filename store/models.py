@@ -122,6 +122,12 @@ class ProjectKit(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    meta_description = models.CharField(
+        max_length=160, blank=True,
+        help_text="SEO summary, 150-160 characters. Leave blank to auto-generate from summary."
+    )
+
+
     class Meta:
         ordering = ["-created_at"]
 
@@ -149,6 +155,13 @@ class ProjectKit(models.Model):
         if not low and not high:
             return "Price on request"
         return f"₹{low:,}–₹{high:,}"
+
+    @property
+    def seo_description(self):
+        if self.meta_description:
+            return self.meta_description
+        text = " ".join(self.summary.split())
+        return (text[:157] + "…") if len(text) > 160 else text
 
 
 class KitComponent(models.Model):
