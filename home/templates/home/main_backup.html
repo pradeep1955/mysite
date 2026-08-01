@@ -18,11 +18,9 @@
 
 <div class="node-marker"></div>
 
-<div class="node-marker"></div>
-
 <section class="story-card" id="story">
   <div class="story-inner">
-    <div class="eyebrow">flagship build</div>
+    <div class="eyebrow">project 001</div>
     <h2>The balcony that watered itself</h2>
     <div class="story-meta">
       <span>ESP32</span>
@@ -56,17 +54,11 @@
       <p class="sensor-empty">Waiting for the first ESP8266 reading.</p>
       {% endif %}
     </div>
-  </div>
-</section>
 
-{% if latest_post %}
-<div class="node-marker"></div>
-
-<section class="story-card">
-  <div class="story-inner">
-    <div class="eyebrow">from the blog</div>
-    <h2>Latest build</h2>
+    <!-- Wrap this entire card in an if-statement safely -->
+    {% if latest_post %}
     <div class="blog-card">
+      <span class="tag">Latest post</span>
       {% if latest_post.image %}
       <img src="{{ latest_post.image.url }}" alt="{{ latest_post.title }}" style="width:100%; border-radius:6px; margin:12px 0;">
       {% endif %}
@@ -76,13 +68,20 @@
       <p>{{ latest_post.content|truncatewords:30 }}</p>
       <a class="story-link accent-link" href="{% url 'post-detail' latest_post.pk %}">Read the post →</a>
     </div>
-  </div>
+    {% endif %}
+
+  </div> 
 </section>
-{% endif %}
 
 <section class="store-section">
   <div class="store-wrap" style="display:flex; justify-content:center;">
     {% include "home/_subscribe_form.html" with source="homepage" %}
+  </div>
+</section>
+
+<section class="store-node" id="store">
+  <div class="store-card">
+    <h3><a class="btn btn-primary" href="{% url 'store:home' %}">Visit the store →</a></h3>
   </div>
 </section>
 {% endblock content %}
