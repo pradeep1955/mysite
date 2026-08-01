@@ -5,6 +5,14 @@ from django.views.generic import DetailView, ListView
 
 from .models import Category, PreorderInterest, Product, ProjectKit
 
+import json
+
+STATUS_TO_AVAILABILITY = {
+    ProjectKit.STATUS_LIVE: "https://schema.org/InStock",
+    ProjectKit.STATUS_PREORDER: "https://schema.org/PreOrder",
+    ProjectKit.STATUS_COMING_SOON: "https://schema.org/PreOrder",
+}
+
 
 class StoreHomeView(ListView):
     """Landing page: every non-draft kit, plus categories for a quick parts browse."""
@@ -21,8 +29,8 @@ class StoreHomeView(ListView):
         return ctx
 
 
+
 class KitDetailView(DetailView):
-    """Full kit page: story, BOM breakdown by category, price range, preorder form."""
     model = ProjectKit
     template_name = "store/kit_detail.html"
     context_object_name = "kit"
@@ -32,10 +40,33 @@ class KitDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        kit = self.object
         ctx["components"] = (
-            self.object.kitcomponent_set
-            .select_related("product", "product__category")
+            kit.kitcomponent_set.select_related("product", "product__category")
         )
+
+        low, high = kit.total_price_range
+        image_url = self.request.build_absolute_uri(kit.cover_image.url) if kit.cover_image else None
+
+        schema = {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": kit.name,
+            "description": kit.seo_description,
+            "url": self.request.build_absolute_uri(),
+            "brand": {"@type": "Brand", "name": "TinkerStack"},
+            "offers": {
+                "@type": "Offer",
+                "priceCurrency": "INR",
+                "price": str(low) if low else "0",
+                "availability": STATUS_TO_AVAILABILITY.get(kit.status, "https://schema.org/PreOrder"),
+                "url": self.request.build_absolute_uri(),
+            },
+        }
+        if image_url:
+            schema["image"] = [image_url]
+
+        ctx["ld_json"] = json.dumps(schema).replace("</", "<\\/")
         return ctx
 
 

@@ -2,10 +2,16 @@
 {% load static %}
 
 {% block title %}{{ kit.name }} — TinkerStack Store{% endblock %}
+{% block meta_description %}{{ kit.seo_description }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">{{ ld_json|safe }}</script>
+{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'store/css/store.css' %}">
 {% endblock %}
+
 
 {% block content %}
 <header class="hero-shell kit-hero">
