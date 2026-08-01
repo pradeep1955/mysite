@@ -109,13 +109,24 @@
       <h3>Interested? Get on the list</h3>
       <p>No payment gateway yet — just leave your details and I'll reach out directly (UPI/WhatsApp) once a batch is ready.</p>
       <form method="post" action="{% url 'store:preorder' kit.slug %}" class="preorder-form">
-        {% csrf_token %}
-        <input type="text" name="name" placeholder="Your name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="tel" name="phone" placeholder="Phone (optional)">
-        <input type="number" name="quantity" value="1" min="1" placeholder="Quantity">
-        <textarea name="message" placeholder="Anything specific you'd like to ask? (optional)"></textarea>
-        <button type="submit" class="btn btn-primary">Notify me</button>
+          {% csrf_token %}
+
+          <label for="id_name" class="visually-hidden">Your name</label>
+          <input type="text" id="id_name" name="name" placeholder="Your name" required>
+
+          <label for="id_email" class="visually-hidden">Email</label>
+          <input type="email" id="id_email" name="email" placeholder="Email" required>
+
+          <label for="id_phone" class="visually-hidden">Phone (optional)</label>
+          <input type="tel" id="id_phone" name="phone" placeholder="Phone (optional)">
+
+          <label for="id_quantity" class="visually-hidden">Quantity</label>
+          <input type="number" id="id_quantity" name="quantity" value="1" min="1" placeholder="Quantity">
+
+          <label for="id_message" class="visually-hidden">Anything specific you'd like to ask? (optional)</label>
+          <textarea id="id_message" name="message" placeholder="Anything specific you'd like to ask? (optional)"></textarea>
+
+          <button type="submit" class="btn btn-primary">Notify me</button>
       </form>
     </div>
   </div>
