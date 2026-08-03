@@ -8,7 +8,9 @@ from .views import (
     PostListView,
     PostUpdateView,
     UserPostListView,
+    PostSearchView,
 )
+
 
 urlpatterns = [
     path("category/<slug:slug>/", PostListView.as_view(), name="category-posts"),
