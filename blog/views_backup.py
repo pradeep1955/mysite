@@ -13,10 +13,6 @@ from django.utils.html import escapejs
 
 from store.models import ProjectKit   # NEW
 
-from django.db.models import Q, Count
-from django.http import Http404
-from .models import Post, Category
-
 cutoff = timezone.make_aware(datetime(2026, 7, 1))
 
 def home(request):
@@ -28,43 +24,10 @@ class PostListView(ListView):
     model = Post
     template_name = "blog/home.html"
     context_object_name = "posts"
-    paginate_by = 10
+    paginate_by = 5
 
     def get_queryset(self):
-        qs = Post.objects.filter(is_hidden=False).order_by("-date_posted")
-        category_slug = self.kwargs.get("slug")
-        if category_slug:
-            qs = qs.filter(categories__slug=category_slug)
-        return qs
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx["categories"] = Category.objects.annotate(post_count=Count("posts")).filter(post_count__gt=0)
-        ctx["active_category"] = self.kwargs.get("slug")
-        return ctx
-
-
-class PostSearchView(ListView):
-    model = Post
-    template_name = "blog/search_results.html"
-    context_object_name = "posts"
-    paginate_by = 10
-
-    def get_queryset(self):
-        query = self.request.GET.get("q", "").strip()
-        if not query:
-            return Post.objects.none()
-        return (
-            Post.objects.filter(is_hidden=False)
-            .filter(Q(title__icontains=query) | Q(content__icontains=query))
-            .order_by("-date_posted")
-        )
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx["query"] = self.request.GET.get("q", "").strip()
-        return ctx
-
+        return Post.objects.filter(is_hidden=False).order_by("-date_posted")
 
 
 
@@ -99,7 +62,7 @@ class PostDetailView(DetailView):
         ctx = super().get_context_data(**kwargs)
         post = self.object
 
-        # --- JSON-LD Article schema ---
+        # --- JSON-LD Article schema (from the SEO fix) ---
         image_url = self.request.build_absolute_uri(post.image.url) if post.image else None
         schema = {
             "@context": "https://schema.org",
@@ -109,39 +72,33 @@ class PostDetailView(DetailView):
             "datePublished": post.date_posted.isoformat(),
             "dateModified": post.date_posted.isoformat(),
             "author": {"@type": "Person", "name": post.author.get_full_name() or post.author.username},
-            "publisher": {"@type": "Organization", "name": "TinkerStack", "url": self.request.build_absolute_uri("/")},
+            "publisher": {
+                "@type": "Organization",
+                "name": "TinkerStack",
+                "url": self.request.build_absolute_uri("/"),
+            },
             "mainEntityOfPage": self.request.build_absolute_uri(),
         }
         if image_url:
             schema["image"] = [image_url]
         ctx["ld_json"] = json.dumps(schema).replace("</", "<\\/")
 
-        # --- Matching kit (for "Shop the parts" CTA) ---
-        post_path = post.get_absolute_url()
+        # --- CTA block: matching kit + related posts (new) ---
+        post_path = post.get_absolute_url()  # e.g. /blog/post/40/
         ctx["matching_kit"] = (
-            ProjectKit.objects.exclude(status=ProjectKit.STATUS_DRAFT)
+            ProjectKit.objects
+            .exclude(status=ProjectKit.STATUS_DRAFT)
             .filter(blog_post_url__icontains=post_path)
             .first()
         )
+        ctx["related_posts"] = (
+            Post.objects
+            .filter(is_hidden=False)
+            .exclude(pk=post.pk)
+            .order_by("-date_posted")[:2]
+        )
 
-        # --- Related posts: real category overlap now, not just "most recent" ---
-        post_categories = post.categories.all()
-        if post_categories.exists():
-            related = (
-                Post.objects.filter(is_hidden=False, categories__in=post_categories)
-                .exclude(pk=post.pk)
-                .annotate(shared=Count("categories", filter=Q(categories__in=post_categories)))
-                .order_by("-shared", "-date_posted")
-                .distinct()[:2]
-            )
-        else:
-            related = Post.objects.filter(is_hidden=False).exclude(pk=post.pk).order_by("-date_posted")[:2]
-        ctx["related_posts"] = related
-
-        # --- Share URL for social buttons ---
-        ctx["share_url"] = self.request.build_absolute_uri()
-
-        return ctx 
+        return ctx  
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
