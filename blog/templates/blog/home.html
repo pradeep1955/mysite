@@ -12,6 +12,21 @@
   </div>
 </header>
 
+<form method="get" action="{% url 'post-search' %}" class="blog-search" role="search">
+  <label for="blog-search-input" class="visually-hidden">Search posts</label>
+  <input id="blog-search-input" type="search" name="q" placeholder="Search posts…" value="{{ request.GET.q }}">
+  <button type="submit" class="btn btn-ghost">Search</button>
+</form>
+
+<div class="category-filter">
+  <a href="{% url 'blog-home' %}" class="category-pill {% if not active_category %}active{% endif %}">All</a>
+  {% for cat in categories %}
+  <a href="{% url 'category-posts' cat.slug %}" class="category-pill {% if active_category == cat.slug %}active{% endif %}">
+    {{ cat.name }} <span class="count">{{ cat.post_count }}</span>
+  </a>
+  {% endfor %}
+</div>
+
 <div class="node-marker"></div>
 <div class="node-marker"></div>
 <section class="store-section">

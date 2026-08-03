@@ -2,7 +2,6 @@
 
 {% block title %}{{ object.title }} — {{ settings.APP_NAME|default:"TinkerStack" }}{% endblock %}
 {% block meta_description %}{{ object.seo_description }}{% endblock %}
-
 {% block structured_data %}
 <script type="application/ld+json">{{ ld_json|safe }}</script>
 {% endblock %}
@@ -15,10 +14,30 @@
       &middot; {{ object.date_posted|date:"F d, Y" }}
     </div>
     <h1>{{ object.title }}</h1>
+
+    {% if object.categories.all %}
+    <div class="category-tags">
+      {% for cat in object.categories.all %}
+      <a href="{% url 'category-posts' cat.slug %}" class="category-pill small">{{ cat.name }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
     {% if object.image %}
     <img src="{{ object.image.url }}" alt="{{ object.title }}" style="width:100%; border-radius:6px; margin-bottom:24px;">
     {% endif %}
     <p style="white-space:pre-line;">{{ object.content }}</p>
+
+    <!-- Social share -->
+    <div class="share-row">
+      <span class="share-label">Share:</span>
+      <a class="share-btn" target="_blank" rel="noopener"
+         href="https://twitter.com/intent/tweet?url={{ share_url|urlencode }}&text={{ object.title|urlencode }}">X / Twitter</a>
+      <a class="share-btn" target="_blank" rel="noopener"
+         href="https://wa.me/?text={{ object.title|urlencode }}%20{{ share_url|urlencode }}">WhatsApp</a>
+      <a class="share-btn" target="_blank" rel="noopener"
+         href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_url|urlencode }}">LinkedIn</a>
+    </div>
 
     {% if object.author == user %}
     <div class="cta-row" style="margin-top:24px;">
@@ -29,19 +48,31 @@
   </div>
 </section>
 
-{% if matching_kit %}
+<!-- Three-way next-step CTA -->
 <div class="node-marker"></div>
 <section class="store-section">
   <div class="store-wrap">
-    <div class="post-cta-card">
-      <span class="tag">from this build</span>
-      <h3>Want to build this?</h3>
-      <p>{{ matching_kit.tagline|default:matching_kit.summary|truncatewords:20 }}</p>
-      <a class="btn btn-primary" href="{{ matching_kit.get_absolute_url }}">Get the parts →</a>
+    <div class="next-step-grid">
+      <div class="next-step-card">
+        <h4>Try this project</h4>
+        <p>Full code and wiring notes are in the post above.</p>
+        <a class="btn btn-ghost" href="https://github.com/pradeep1955" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+      {% if matching_kit %}
+      <div class="next-step-card">
+        <h4>Shop the parts</h4>
+        <p>{{ matching_kit.tagline|default:matching_kit.summary|truncatewords:14 }}</p>
+        <a class="btn btn-primary" href="{{ matching_kit.get_absolute_url }}">Get the parts →</a>
+      </div>
+      {% endif %}
+      <div class="next-step-card">
+        <h4>Subscribe</h4>
+        <p>New builds, occasionally an AI/ML tangent. No spam.</p>
+        <a class="btn btn-ghost" href="{% url 'blog-home' %}#subscribe">Notify me →</a>
+      </div>
     </div>
   </div>
 </section>
-{% endif %}
 
 {% if related_posts %}
 <div class="node-marker"></div>
@@ -51,9 +82,7 @@
     <div class="related-posts-grid">
       {% for related in related_posts %}
       <a class="related-post-card" href="{% url 'post-detail' related.id %}">
-        {% if related.image %}
-        <img src="{{ related.image.url }}" alt="{{ related.title }}">
-        {% endif %}
+        {% if related.image %}<img src="{{ related.image.url }}" alt="{{ related.title }}">{% endif %}
         <h4>{{ related.title }}</h4>
         <span class="related-post-date">{{ related.date_posted|date:"M d, Y" }}</span>
       </a>

@@ -1,0 +1,21 @@
+{% extends "base_bootstrap.html" %}
+{% block title %}Search: {{ query }} — TinkerStack{% endblock %}
+{% block meta_description %}Search results for "{{ query }}" on TinkerStack.{% endblock %}
+
+{% block content %}
+<section class="store-section">
+  <div class="store-wrap">
+    <h1>Search results for "{{ query }}"</h1>
+    {% if posts %}
+      {% for post in posts %}
+        <a href="{% url 'post-detail' post.id %}" class="related-post-card">
+          <h4>{{ post.title }}</h4>
+          <span class="related-post-date">{{ post.date_posted|date:"M d, Y" }}</span>
+        </a>
+      {% endfor %}
+    {% else %}
+      <p>No posts matched "{{ query }}". Try a different term, or <a href="{% url 'blog-home' %}">browse all posts</a>.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
